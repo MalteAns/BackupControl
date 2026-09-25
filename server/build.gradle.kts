@@ -22,6 +22,13 @@ dependencies {
     implementation(libs.koin.logger.slf4j)
     // Http Client (for status page images)
     implementation(libs.ktor.client.cio)
+    // Exposed + SQLite (DB)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.java.time) // DateTime support
+    implementation(libs.exposed.migration.core) // Migration support
+    implementation(libs.exposed.migration.jdbc) // Migration support
+    implementation(libs.sqlite.jdbc) // SQLite
 
     testImplementation(libs.kotlin.testJunit)
 }

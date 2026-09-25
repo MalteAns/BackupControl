@@ -17,11 +17,14 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
 fun main() {
-    embeddedServer(Netty, port = Constants.SERVER_PORT, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = CoreConstants.SERVER_PORT, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
 fun Application.module() {
+    assert(System.getenv(ServerConstants.API_TOKEN_ENV_VAR) != null) { "API_TOKEN environment variable must be set" }
+    assert(System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR) != null) { "FILES_DIR environment variable must be set" }
+
     install(DefaultHeaders)
     install(AutoHeadResponse)
     install(CallLogging)
@@ -42,7 +45,9 @@ fun Application.module() {
     install(Authentication) {
         bearer("bearer") {
             authenticate { tokenCredential ->
-                if (System.getenv("API_TOKEN").equals(tokenCredential.token)) UserIdPrincipal("api-user") else null
+                if (System.getenv(ServerConstants.API_TOKEN_ENV_VAR).equals(tokenCredential.token))
+                    UserIdPrincipal("api-user")
+                else null
             }
         }
     }

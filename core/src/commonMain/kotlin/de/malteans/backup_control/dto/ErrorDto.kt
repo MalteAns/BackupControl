@@ -4,6 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ErrorDto(
-    val code: String,
-    val message: String
+    val code: ErrorCode,
+    val message: String,
 )
+
+enum class ErrorCode {
+    UNKNOWN_ERROR,
+    GET_BACKUPS_FAILED,
+    UPDATE_BACKUPS_FAILED,
+}

@@ -1,5 +1,6 @@
 package de.malteans.backup_control.plugins
 
+import de.malteans.backup_control.dto.ErrorCode
 import de.malteans.backup_control.dto.ErrorDto
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -23,7 +24,7 @@ fun Application.configureStatusPages() {
         exception<Throwable> { call, cause ->
             // TODO: log cause
             cause.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorDto("server_error", cause.message ?: ""))
+            call.respond(HttpStatusCode.InternalServerError, ErrorDto(ErrorCode.UNKNOWN_ERROR, cause.message ?: ""))
         }
 
         status(

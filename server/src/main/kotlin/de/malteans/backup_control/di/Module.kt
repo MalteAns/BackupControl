@@ -1,7 +1,32 @@
 package de.malteans.backup_control.di
 
+import de.malteans.backup_control.ServerConstants
+import de.malteans.backup_control.db.BackupsTable
+import de.malteans.backup_control.services.BackupService
+import de.malteans.backup_control.services.BackupServiceImpl
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 import org.koin.dsl.module
 
 val module = module {
+    single<Database> {
+        val dbPath = System.getenv(ServerConstants.DATABASE_PATH_ENV_VAR)
+            ?: ServerConstants.DEFAULT_DATABASE_PATH
 
+        val database = Database.connect(
+            url = "jdbc:sqlite:$dbPath",
+            driver = "org.sqlite.JDBC",
+        )
+
+        transaction(database) {
+            MigrationUtils.statementsRequiredForDatabaseMigration(BackupsTable, withLogs = true).forEach { statement ->
+                exec(statement)
+            }
+        }
+
+        database
+    }
+    
+    single<BackupService> { BackupServiceImpl(get()) }
 }
