@@ -2,7 +2,7 @@ package de.malteans.backup_control.services
 
 import de.malteans.backup_control.ServerConstants
 import de.malteans.backup_control.db.BackupsTable
-import de.malteans.backup_control.model.Backup
+import de.malteans.backup_control.model.BackupDto
 import de.malteans.backup_control.services.util.readLastNLines
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
@@ -15,7 +15,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 interface BackupService {
-    suspend fun getBackups(): Result<List<Backup>>
+    suspend fun getBackups(): Result<List<BackupDto>>
     suspend fun updateBackups(): Result<Unit>
 
     suspend fun insertBackup(logFilePath: String): Result<Unit>
@@ -31,10 +31,10 @@ class BackupServiceImpl(
         val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")!!
     }
 
-    override suspend fun getBackups(): Result<List<Backup>> = runCatching {
+    override suspend fun getBackups(): Result<List<BackupDto>> = runCatching {
         transaction(database) {
             BackupsTable.selectAll().map { row ->
-                Backup(
+                BackupDto(
                     uuid = row[BackupsTable.uuid],
                     datetime = row[BackupsTable.datetime].toString(),
                     fileName = row[BackupsTable.fileName],
