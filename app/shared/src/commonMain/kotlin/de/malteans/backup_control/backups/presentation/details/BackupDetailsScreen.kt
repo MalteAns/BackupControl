@@ -18,7 +18,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun BackupDetailsScreenRoot(
     logFileName: String,
-    viewModel: BackupDetailsViewModel = koinViewModel() {
+    viewModel: BackupDetailsViewModel = koinViewModel {
         parametersOf(logFileName)
     }
 ) {

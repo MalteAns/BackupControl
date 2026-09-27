@@ -1,7 +1,14 @@
 package de.malteans.backup_control.core.presentation.navigation
 
-sealed interface AppRoute
+import kotlinx.serialization.Serializable
 
-data object BackupsRoute : AppRoute
-
-data class BackupDetailRoute(val logFileName: String) : AppRoute
+@Serializable
+sealed interface Route {
+    @Serializable
+    data object Backup : Route {
+        @Serializable
+        data object Overview : Route
+        @Serializable
+        data  class Details(val logFileName: String) : Route
+    }
+}

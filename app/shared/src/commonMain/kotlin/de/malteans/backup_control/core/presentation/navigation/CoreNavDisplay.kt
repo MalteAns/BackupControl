@@ -7,33 +7,26 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import de.malteans.backup_control.backups.presentation.details.BackupDetailsScreenRoot
-import de.malteans.backup_control.backups.presentation.overview.BackupsOverviewScreenRoot
+import de.malteans.backup_control.backups.presentation.BackupScreen
 
 @Composable
 fun NavGraph(
     modifier: Modifier = Modifier,
 ) {
-    val backStack = remember { mutableStateListOf<AppRoute>(BackupsRoute) }
+    val backStack = remember { mutableStateListOf<Route>(Route.Backup) }
 
     NavDisplay(
         backStack = backStack,
+        onBack = {},
         entryDecorators = listOf(
             rememberViewModelStoreNavEntryDecorator(),
         ),
         modifier = modifier,
         entryProvider = { key ->
             when (key) {
-                is BackupsRoute -> NavEntry(key) {
-                    BackupsOverviewScreenRoot(
-                        onBackupClick = { logFileName ->
-                            backStack.add(BackupDetailRoute(logFileName))
-                        }
-                    )
-                }
-                is BackupDetailRoute -> NavEntry(key) {
-                    BackupDetailsScreenRoot(
-                        logFileName = key.logFileName,
+                is Route.Backup -> NavEntry(key) {
+                    BackupScreen(
+                        onClose = { backStack.removeLast() },
                     )
                 }
                 else -> error("Unknown route: $key")
