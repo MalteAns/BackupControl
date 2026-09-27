@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,6 +8,41 @@ plugins {
     alias(libs.plugins.composeCompiler)
 
     alias(libs.plugins.kotlin.serialization)
+}
+
+private val apiToken: String = gradleLocalProperties(rootDir, rootProject.providers)
+    .getProperty("API_TOKEN")
+    ?: System.getenv("API_TOKEN")
+    ?: throw IllegalStateException(
+        "Missing API_TOKEN property in local.properties or environment variables"
+    )
+
+val generateDesktopBuildConfig = tasks.register("generateDesktopBuildConfig") {
+    description = "Generates a BuildConfig file for the desktop target with the API token."
+
+    notCompatibleWithConfigurationCache("Custom script writes file dynamically")
+
+    val outputDir = layout.buildDirectory.dir("generated/buildConfig/desktopMain/kotlin")
+    val packagePath = "de/malteans/recipes/core/data/network"
+    val outputFile = outputDir.map { it.file("$packagePath/DesktopBuildConfig.kt") }
+
+    inputs.property("apiToken", apiToken)
+    outputs.file(outputFile)
+
+    doLast {
+        val safeToken = apiToken.removeSurrounding("\"")
+        val file = outputFile.get().asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            package ${libs.versions.applicationId.get()}.core.data.network
+
+            object DesktopBuildConfig {
+                const val API_TOKEN = "$safeToken"
+            }
+            """.trimIndent()
+        )
+    }
 }
 
 kotlin {
@@ -20,7 +56,13 @@ kotlin {
         }
     }
 
-    jvm()
+    jvm {
+        compilations["main"].defaultSourceSet {
+            kotlin.srcDir(generateDesktopBuildConfig.map {
+                it.outputs.files.singleFile.parentFile
+            })
+        }
+    }
 
     android {
         namespace = "de.malteans.backup_control.app.shared"

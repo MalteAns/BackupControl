@@ -17,7 +17,7 @@ val sharedModule = module {
     single<PreferenceDataStore> { DefaultPreferenceDataStore(get()) }
 
     single<HttpClient> { HttpClientFactory.create(get()) }
-    single<BackupRepository> { BackupRepositoryImpl(get()) }
+    single<BackupRepository> { BackupRepositoryImpl(get(), get()) }
 
     viewModelOf(::BackupViewModel)
 }

@@ -21,8 +21,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "de.malteans.backup_control"
-            packageVersion = "1.0.0"
+            packageName = libs.versions.applicationId.get()
+            packageVersion = libs.versions.projectVersionName.get()
         }
     }
 }
