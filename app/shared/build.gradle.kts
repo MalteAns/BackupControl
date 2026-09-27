@@ -121,6 +121,10 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
+
+            // Navigation 3
+            implementation(libs.navigation3.ui)
+            implementation(libs.navigation3.lifecycle.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

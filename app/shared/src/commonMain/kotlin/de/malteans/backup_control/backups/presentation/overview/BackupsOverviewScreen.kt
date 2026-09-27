@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backups.presentation
+package de.malteans.backup_control.backups.presentation.overview
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,17 +19,18 @@ import de.malteans.backup_control.backups.presentation.util.BackupItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun BackupsScreenRoot(
-    viewModel: BackupViewModel = koinViewModel()
+fun BackupsOverviewScreenRoot(
+    viewModel: BackupOverviewViewModel = koinViewModel(),
+    onBackupClick: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    BackupsScreen(
+    BackupsOverviewScreen(
         state = state,
         onAction = { action ->
             when (action) {
-                is BackupsAction.OpenBackupLog -> {
-                    TODO()
+                is BackupsOverviewAction.OpenBackupLog -> {
+                    onBackupClick(action.logFileName)
                 }
                 else -> viewModel.onAction(action)
             }
@@ -38,9 +39,9 @@ fun BackupsScreenRoot(
 }
 
 @Composable
-fun BackupsScreen(
-    state: BackupsState,
-    onAction: (BackupsAction) -> Unit,
+fun BackupsOverviewScreen(
+    state: BackupsOverviewState,
+    onAction: (BackupsOverviewAction) -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -63,7 +64,7 @@ fun BackupsScreen(
                 items(state.backups) { backup ->
                     BackupItem(
                         backup = backup,
-                        onClick = { onAction(BackupsAction.OpenBackupLog(backup.uuid)) },
+                        onClick = { onAction(BackupsOverviewAction.OpenBackupLog(backup.fileName)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

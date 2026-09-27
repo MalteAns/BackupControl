@@ -29,4 +29,12 @@ class BackupRepositoryImpl(
                 response.backups.map { it.toDomain() }
             }
     }
+
+    override suspend fun getBackupLogFile(logFileName: String): Result<String> {
+        return safeCall<String> {
+            client.get(Endpoints.Files.GetFile(logFileName).url) {
+                header("Authorization", "Bearer ${apiConfig.apiToken}")
+            }
+        }
+    }
 }
