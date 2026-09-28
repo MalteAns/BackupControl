@@ -32,7 +32,7 @@ fun BackupItem(
         modifier = modifier
     ) {
         ListItem(
-            headlineContent = { Text(backup.startTime.date.toString()) },
+            headlineContent = { Text(backup.startTime?.date.toString()) },
             supportingContent = {
                 Text(
                     text = "${stringResource(Res.string.duration)}: ${backup.duration?.formatDuration() ?: "—"}",

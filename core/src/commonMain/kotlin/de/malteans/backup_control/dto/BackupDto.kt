@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BackupDto(
     val uuid: String,
-    val datetime: String,
+    val startTime: String?,
     val fileName: String,
     val success: Boolean?,
     val duration: Int?,

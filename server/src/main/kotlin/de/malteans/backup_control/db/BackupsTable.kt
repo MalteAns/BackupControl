@@ -6,7 +6,7 @@ import org.jetbrains.exposed.v1.javatime.datetime
 
 object BackupsTable : Table("backups") {
     val uuid = varchar("uuid", 255)
-    val datetime = datetime("datetime")
+    val startTime = datetime("start_time").nullable()
     val fileName = varchar("file_name", 255)
 
     val success = bool("success").nullable()

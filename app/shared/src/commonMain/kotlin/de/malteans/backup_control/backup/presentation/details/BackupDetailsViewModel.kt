@@ -27,6 +27,12 @@ class BackupDetailsViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            backupRemoteSource.getBackups()
+                .onSuccess { backups ->
+                    _state.update { it.copy(
+                        selectedBackup = backups.find { backup -> backup.fileName == logFileName }
+                    ) }
+                }
             backupRemoteSource.getBackupLogFile(logFileName)
                 .onSuccess { logFileContent ->
                     _state.update { it.copy(

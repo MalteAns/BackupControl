@@ -2,7 +2,6 @@ package de.malteans.backup_control.backup.presentation.details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalGridApi
-import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -12,8 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.malteans.backup_control.backup.presentation.details.compose.FileDistributionTags
+import de.malteans.backup_control.model.FileDistribution
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,12 +59,23 @@ fun BackupDetailsScreen(
     ElevatedCard(
 
     ) {
-        Grid(
-            config = {
-                column(3.dp)
-            }
-        ) {
-
+        if (state.selectedBackup == null) {
+            Text(
+                text = "No backup selected",
+            )
+            return@ElevatedCard
         }
+        Text(
+            text = "Starttime: ${state.selectedBackup.startTime}",
+        )
+        FileDistributionTags(
+            distribution = state.selectedBackup.totalFiles ?: FileDistribution(0, 0, 0),
+        )
+        FileDistributionTags(
+            distribution = state.selectedBackup.createdFiles ?: FileDistribution(0, 0, 0),
+        )
+        FileDistributionTags(
+            distribution = state.selectedBackup.deletedFiles ?: FileDistribution(0, 0, 0),
+        )
     }
 }

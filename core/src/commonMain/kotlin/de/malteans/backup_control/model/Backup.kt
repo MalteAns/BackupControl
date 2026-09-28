@@ -7,7 +7,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 data class Backup(
     val uuid: String = Uuid.generateV7().toHexDashString(),
-    val startTime: LocalDateTime,
+    val startTime: LocalDateTime? = null,
     val fileName: String,
     val success: Boolean? = null,
     /** Duration in seconds */

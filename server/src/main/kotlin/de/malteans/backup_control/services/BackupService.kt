@@ -18,6 +18,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 interface BackupService {
     suspend fun getBackups(): Result<List<Backup>>
@@ -87,7 +88,7 @@ class BackupServiceImpl(
 
                 Backup(
                     uuid = row[BackupsTable.uuid],
-                    startTime = row[BackupsTable.datetime].toKotlinLocalDateTime(),
+                    startTime = row[BackupsTable.startTime]?.toKotlinLocalDateTime(),
                     fileName = row[BackupsTable.fileName],
                     success = row[BackupsTable.success],
                     duration = row[BackupsTable.duration],
@@ -112,10 +113,10 @@ class BackupServiceImpl(
 
         val cutoffTime = transaction(database) {
             BackupsTable
-                .select(BackupsTable.datetime)
-                .orderBy(BackupsTable.datetime, SortOrder.DESC)
+                .select(BackupsTable.startTime)
+                .orderBy(BackupsTable.startTime, SortOrder.DESC)
                 .limit(1)
-                .map { it[BackupsTable.datetime] }
+                .map { it[BackupsTable.startTime] }
                 .firstOrNull()
         } ?: LocalDateTime.MIN
 
@@ -143,18 +144,19 @@ class BackupServiceImpl(
             logText.add(0, firstLine)
         }
 
-        val backup = parseRsyncLog(logText)
+        val fileName = logFilePath.substringAfterLast('/')
+        val backup = parseRsyncLog(fileName, logText)
 
         transaction(database) {
             fun insertFileDistribution(distribution: FileDistribution?): String? {
                 if (distribution == null) return null
-                val generatedUuid = kotlin.uuid.Uuid.random().toString()
+                val generatedUuid = Uuid.generateV7().toHexDashString()
 
                 FileDistributionTable.insert {
-                    it[uuid] = generatedUuid
-                    it[regularFiles] = distribution.regularFiles
-                    it[directories] = distribution.directories
-                    it[fileLinks] = distribution.fileLinks
+                    it[FileDistributionTable.uuid] = generatedUuid
+                    it[FileDistributionTable.regularFiles] = distribution.regularFiles
+                    it[FileDistributionTable.directories] = distribution.directories
+                    it[FileDistributionTable.fileLinks] = distribution.fileLinks
                 }
                 return generatedUuid
             }
@@ -163,24 +165,24 @@ class BackupServiceImpl(
             val createdFilesUuid = insertFileDistribution(backup.createdFiles)
             val deletedFilesUuid = insertFileDistribution(backup.deletedFiles)
 
-            BackupsTable.insert {
-                it[uuid] = kotlin.uuid.Uuid.random().toString()
+            BackupsTable.insert { insert ->
+                insert[BackupsTable.uuid] = Uuid.generateV7().toHexDashString()
 
-                it[datetime] = LocalDateTime.parse(backup.startTime.toString())
+                insert[BackupsTable.startTime] = backup.startTime?.let { LocalDateTime.parse(it.toString()) }
 
-                it[fileName] = backup.fileName
-                it[success] = backup.success
-                it[duration] = backup.duration
-                it[totalFiles] = totalFilesUuid
-                it[createdFiles] = createdFilesUuid
-                it[deletedFiles] = deletedFilesUuid
-                it[transferredRegularFiles] = backup.transferredRegularFiles
-                it[totalFileSize] = backup.totalFileSize
-                it[transferredFileSize] = backup.transferredFileSize
-                it[totalBytesSent] = backup.totalBytesSent
-                it[totalBytesReceived] = backup.totalBytesReceived
-                it[bytesPerSecond] = backup.bytesPerSecond
-                it[speedup] = backup.speedup
+                insert[BackupsTable.fileName] = backup.fileName
+                insert[BackupsTable.success] = backup.success
+                insert[BackupsTable.duration] = backup.duration
+                insert[BackupsTable.totalFiles] = totalFilesUuid
+                insert[BackupsTable.createdFiles] = createdFilesUuid
+                insert[BackupsTable.deletedFiles] = deletedFilesUuid
+                insert[BackupsTable.transferredRegularFiles] = backup.transferredRegularFiles
+                insert[BackupsTable.totalFileSize] = backup.totalFileSize
+                insert[BackupsTable.transferredFileSize] = backup.transferredFileSize
+                insert[BackupsTable.totalBytesSent] = backup.totalBytesSent
+                insert[BackupsTable.totalBytesReceived] = backup.totalBytesReceived
+                insert[BackupsTable.bytesPerSecond] = backup.bytesPerSecond
+                insert[BackupsTable.speedup] = backup.speedup
             }
         }
     }
@@ -194,7 +196,7 @@ class BackupServiceImpl(
     /**
      * @param logLines consists of the first line with the timestamp of the start and then the last 17 lines which contain the statistics after a successful backup
      */
-    fun parseRsyncLog(logLines: MutableList<String>): Backup {
+    fun parseRsyncLog(fileName: String, logLines: MutableList<String>): Backup {
         val isFailed = logLines.any { it.contains("Backup failed") }
         val validLines = logLines.filter { it.isNotBlank() }
 
@@ -220,16 +222,11 @@ class BackupServiceImpl(
             (endDatetime.toEpochSecond(zoneOffset) - parsedStartTime.toEpochSecond(zoneOffset)).toInt()
         } else null
 
-        val fileFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
-        // Safely format the fileName (fallback to current time if parsing completely fails)
-        val safeFileNameDate = endDatetime ?: LocalDateTime.now()
-        val fileName = "${safeFileNameDate.format(fileFormatter)}_log-backup.txt"
-
         // 3. Early return if backup failed
         if (isFailed) {
             return Backup(
                 fileName = fileName,
-                startTime = parsedStartTime?.toKotlinLocalDateTime() ?: LocalDateTime.now().toKotlinLocalDateTime(),
+                startTime = parsedStartTime?.toKotlinLocalDateTime(),
                 success = false,
                 duration = computedDuration
             )
@@ -288,7 +285,7 @@ class BackupServiceImpl(
 
         return Backup(
             fileName = fileName,
-            startTime = parsedStartTime?.toKotlinLocalDateTime() ?: LocalDateTime.now().toKotlinLocalDateTime(),
+            startTime = parsedStartTime?.toKotlinLocalDateTime(),
             success = true,
             duration = computedDuration,
             totalFiles = totalFiles,
