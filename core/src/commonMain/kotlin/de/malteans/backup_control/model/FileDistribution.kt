@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FileDistribution(
-    val uuid: String,
     val regularFiles: Int,
     val directories: Int,
     val fileLinks: Int,
