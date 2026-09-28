@@ -6,7 +6,7 @@ import kotlinx.datetime.LocalDateTime
 
 fun BackupDto.toDomain() = Backup(
     uuid = uuid,
-    datetime = LocalDateTime.parse(datetime),
+    startTime = LocalDateTime.parse(datetime),
     fileName = fileName,
     success = success,
     duration = duration,
@@ -24,7 +24,7 @@ fun BackupDto.toDomain() = Backup(
 
 fun Backup.toDto() = BackupDto(
     uuid = uuid,
-    datetime = datetime.toString(),
+    datetime = startTime.toString(),
     fileName = fileName,
     success = success,
     duration = duration,

@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backups.presentation.overview
+package de.malteans.backup_control.backup.presentation.overview
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,21 +13,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.malteans.backup_control.backups.presentation.util.BackupItem
+import de.malteans.backup_control.backup.presentation.util.BackupItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun BackupsOverviewScreenRoot(
+fun BackupOverviewScreenRoot(
     viewModel: BackupOverviewViewModel = koinViewModel(),
     onBackupClick: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    BackupsOverviewScreen(
+    BackupOverviewScreen(
         state = state,
         onAction = { action ->
             when (action) {
-                is BackupsOverviewAction.OpenBackupLog -> {
+                is BackupOverviewAction.OpenBackupLog -> {
                     onBackupClick(action.logFileName)
                 }
                 else -> viewModel.onAction(action)
@@ -37,9 +37,9 @@ fun BackupsOverviewScreenRoot(
 }
 
 @Composable
-fun BackupsOverviewScreen(
-    state: BackupsOverviewState,
-    onAction: (BackupsOverviewAction) -> Unit,
+fun BackupOverviewScreen(
+    state: BackupOverviewState,
+    onAction: (BackupOverviewAction) -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -66,7 +66,7 @@ fun BackupsOverviewScreen(
                 items(state.backups) { backup ->
                     BackupItem(
                         backup = backup,
-                        onClick = { onAction(BackupsOverviewAction.OpenBackupLog(backup.fileName)) },
+                        onClick = { onAction(BackupOverviewAction.OpenBackupLog(backup.fileName)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

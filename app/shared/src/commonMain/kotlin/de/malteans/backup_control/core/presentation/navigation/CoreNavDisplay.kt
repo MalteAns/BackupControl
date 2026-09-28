@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import de.malteans.backup_control.backups.presentation.BackupScreen
+import de.malteans.backup_control.backup.presentation.BackupScreen
 
 @Composable
 fun CoreNavDisplay(

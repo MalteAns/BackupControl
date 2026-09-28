@@ -1,7 +1,7 @@
-package de.malteans.backup_control.backups.data
+package de.malteans.backup_control.backup.data
 
 import de.malteans.backup_control.Endpoints
-import de.malteans.backup_control.backups.domain.BackupRemoteSource
+import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import de.malteans.backup_control.core.data.AnsLog
 import de.malteans.backup_control.core.data.network.ApiConfig
 import de.malteans.backup_control.core.data.network.safeCall

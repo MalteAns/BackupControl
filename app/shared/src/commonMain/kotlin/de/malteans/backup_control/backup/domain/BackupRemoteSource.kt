@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backups.domain
+package de.malteans.backup_control.backup.domain
 
 import de.malteans.backup_control.model.Backup
 

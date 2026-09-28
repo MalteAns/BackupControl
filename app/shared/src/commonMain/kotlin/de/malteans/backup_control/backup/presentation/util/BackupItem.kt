@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backups.presentation.util
+package de.malteans.backup_control.backup.presentation.util
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
@@ -32,7 +32,7 @@ fun BackupItem(
         modifier = modifier
     ) {
         ListItem(
-            headlineContent = { Text(backup.datetime.date.toString()) },
+            headlineContent = { Text(backup.startTime.date.toString()) },
             supportingContent = {
                 Text(
                     text = "${stringResource(Res.string.duration)}: ${backup.duration?.formatDuration() ?: "—"}",

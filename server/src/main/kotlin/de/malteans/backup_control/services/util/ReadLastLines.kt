@@ -2,16 +2,13 @@ package de.malteans.backup_control.services.util
 
 import java.io.RandomAccessFile
 
-
-fun readLastNLines(filePath: String?, n: Int): MutableList<String?> {
-    val lines: MutableList<String?> = mutableListOf()
-    if (n <= 0) return lines // Return empty list for non-positive N
-
+fun readLastNLines(filePath: String, n: Int): MutableList<String> {
+    val lines: MutableList<String> = mutableListOf()
+    if (n <= 0) return mutableListOf() // Changed from emptyList() to mutableListOf()
 
     RandomAccessFile(filePath, "r").use { file ->
         val fileLength = file.length()
         if (fileLength == 0L) return lines // Empty file
-
 
         var pointer = fileLength - 1 // Start at the last byte
         var lineCount = 0
@@ -33,17 +30,14 @@ fun readLastNLines(filePath: String?, n: Int): MutableList<String?> {
             pointer--
         }
 
-
         // Add the last line (if file doesn't end with a newline)
-        if (currentLine.isNotEmpty()) {
+        if (currentLine.isNotEmpty() && lineCount < n) {
             lines.add(currentLine.reverse().toString())
             lineCount++
         }
 
-
-        // Reverse to restore natural order (last line first → first of last N lines)
+        // Reverse to restore natural order
         lines.reverse()
-
 
         // Handle cases where there are fewer lines than N
         return if (lines.size > n) lines.subList(lines.size - n, lines.size) else lines

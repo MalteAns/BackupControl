@@ -1,8 +1,8 @@
-package de.malteans.backup_control.backups.presentation.details
+package de.malteans.backup_control.backup.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.malteans.backup_control.backups.domain.BackupRemoteSource
+import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow

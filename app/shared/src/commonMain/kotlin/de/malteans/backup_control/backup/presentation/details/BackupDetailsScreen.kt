@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backups.presentation.details
+package de.malteans.backup_control.backup.presentation.details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
