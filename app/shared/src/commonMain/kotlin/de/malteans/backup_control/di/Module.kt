@@ -1,9 +1,9 @@
 package de.malteans.backup_control.di
 
-import de.malteans.backup_control.backups.data.DefaultBackupRemoteSource
-import de.malteans.backup_control.backups.domain.BackupRemoteSource
-import de.malteans.backup_control.backups.presentation.details.BackupDetailsViewModel
-import de.malteans.backup_control.backups.presentation.overview.BackupOverviewViewModel
+import de.malteans.backup_control.backup.data.DefaultBackupRemoteSource
+import de.malteans.backup_control.backup.domain.BackupRemoteSource
+import de.malteans.backup_control.backup.presentation.details.BackupDetailsViewModel
+import de.malteans.backup_control.backup.presentation.overview.BackupOverviewViewModel
 import de.malteans.backup_control.core.data.network.HttpClientFactory
 import de.malteans.datastore.data.DefaultPreferenceDataStore
 import de.malteans.datastore.domain.PreferenceDataStore

@@ -88,7 +88,7 @@ class BackupServiceImpl(
 
                 Backup(
                     uuid = row[BackupsTable.uuid],
-                    datetime = row[BackupsTable.datetime].toKotlinLocalDateTime(),
+                    startTime = row[BackupsTable.datetime].toKotlinLocalDateTime(),
                     fileName = row[BackupsTable.fileName],
                     success = row[BackupsTable.success],
                     duration = row[BackupsTable.duration],

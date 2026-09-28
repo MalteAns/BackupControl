@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 
 data class Backup(
     val uuid: String,
-    val datetime: LocalDateTime,
+    val startTime: LocalDateTime,
     val fileName: String,
     val success: Boolean?,
     val duration: Int?,

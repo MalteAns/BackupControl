@@ -1,8 +1,8 @@
-package de.malteans.backup_control.backups.presentation.overview
+package de.malteans.backup_control.backup.presentation.overview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.malteans.backup_control.backups.domain.BackupRemoteSource
+import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -13,22 +13,22 @@ class BackupOverviewViewModel(
     private val repository: BackupRemoteSource
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(BackupsOverviewState())
+    private val _state = MutableStateFlow(BackupOverviewState())
     val state = _state
         .stateIn(
         viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            BackupsOverviewState()
+            BackupOverviewState()
         )
 
     init {
         loadBackups()
     }
 
-    fun onAction(action: BackupsOverviewAction) {
+    fun onAction(action: BackupOverviewAction) {
         when (action) {
-            is BackupsOverviewAction.LoadBackupsOverview -> loadBackups()
-            is BackupsOverviewAction.OpenBackupLog -> throw IllegalArgumentException("$action should be handled in RootScreen")
+            is BackupOverviewAction.LoadBackupOverview -> loadBackups()
+            is BackupOverviewAction.OpenBackupLog -> throw IllegalArgumentException("$action should be handled in RootScreen")
         }
     }
 

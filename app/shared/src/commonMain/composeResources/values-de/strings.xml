@@ -10,4 +10,7 @@
     <string name="hours">Stunden</string>
     <string name="minutes">Minuten</string>
     <string name="seconds">Sekunden</string>
+    <string name="regular_files">Reguläre Dateien</string>
+    <string name="directories">Verzeichnisse</string>
+    <string name="file_links">Dateilinks</string>
 </resources>
