@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Backup Control</string>
+    <string name="en">English</string>
+    <string name="de">Deutsch</string>
+
+    <!-- Backup ____________________________________________________________________________________________________ -->
+    <string name="backup">Backup</string>
+    <string name="duration">Duration</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+</resources>

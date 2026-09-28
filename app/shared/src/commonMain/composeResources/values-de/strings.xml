@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Sicherungskopiekontrolle</string>
+    <string name="en">English</string>
+    <string name="de">Deutsch</string>
+
+    <!-- Backup ____________________________________________________________________________________________________ -->
+    <string name="backup">Sicherungskopie</string>
+    <string name="duration">Dauer</string>
+    <string name="hours">Stunden</string>
+    <string name="minutes">Minuten</string>
+    <string name="seconds">Sekunden</string>
+</resources>

@@ -10,7 +10,7 @@ import androidx.navigation3.ui.NavDisplay
 import de.malteans.backup_control.backups.presentation.BackupScreen
 
 @Composable
-fun NavGraph(
+fun CoreNavDisplay(
     modifier: Modifier = Modifier,
 ) {
     val backStack = remember { mutableStateListOf<Route>(Route.Backup) }

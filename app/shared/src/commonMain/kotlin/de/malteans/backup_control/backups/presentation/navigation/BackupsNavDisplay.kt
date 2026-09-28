@@ -25,6 +25,8 @@ fun BackupNavDisplay(
         entryDecorators = listOf(
             rememberViewModelStoreNavEntryDecorator(),
         ),
+//        popTransitionSpec = {
+//        },
         modifier = modifier,
         entryProvider = { key ->
             when (key) {

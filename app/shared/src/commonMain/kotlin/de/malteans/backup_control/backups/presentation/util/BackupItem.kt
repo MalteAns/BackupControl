@@ -1,11 +1,17 @@
 package de.malteans.backup_control.backups.presentation.util
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import backupcontrol.app.shared.generated.resources.*
 import de.malteans.backup_control.model.Backup
-import kotlinx.datetime.LocalDateTime
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BackupItem(
@@ -26,26 +32,49 @@ fun BackupItem(
         modifier = modifier
     ) {
         ListItem(
-            headlineContent = { Text(backup.datetime.toNiceString()) },
-            supportingContent = { Text(backup.fileName) },
-//            leadingContent = {
-//                Icon(
-//                    imageVector =
-//                )
-//            },
-//            trailingContent = {
-//                Icon(
-//                    imageVector =
-//                )
-//            },
+            headlineContent = { Text(backup.datetime.date.toString()) },
+            supportingContent = {
+                Text(
+                    text = "${stringResource(Res.string.duration)}: ${backup.duration?.formatDuration() ?: "—"}",
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = when (backup.success) {
+                        true -> Icons.Outlined.CheckCircle
+                        false -> Icons.Outlined.ErrorOutline
+                        null -> Icons.Outlined.HourglassEmpty
+                    },
+                    contentDescription = null
+                )
+            },
+            trailingContent = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    contentDescription = null
+                )
+            },
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
                 contentColor = LocalContentColor.current,
+                leadingContentColor = LocalContentColor.current,
+                trailingContentColor = LocalContentColor.current,
             ),
         )
     }
 }
 
-fun LocalDateTime.toNiceString(): String {
-    return "${this.date} ${this.time}"
+@Composable
+private fun Int.formatDuration(): String {
+    val hours = this / 3600
+    val minutes = (this % 3600) / 60
+    val seconds = this % 60
+
+    fun Int.toTwoDigits(): String = this.toString().padStart(2, '0')
+
+    return when {
+        hours > 0 -> "${hours.toTwoDigits()}:${minutes.toTwoDigits()}:${seconds.toTwoDigits()} ${stringResource(Res.string.hours)}"
+        minutes > 0 -> "${minutes.toTwoDigits()}:${seconds.toTwoDigits()} ${stringResource(Res.string.minutes)}"
+        else -> "${seconds.toTwoDigits()} ${stringResource(Res.string.seconds)}"
+    }
 }

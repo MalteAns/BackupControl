@@ -1,8 +1,6 @@
 package de.malteans.backup_control.backups.presentation.overview
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -59,7 +57,11 @@ fun BackupsOverviewScreen(
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 300.dp),
-                modifier = Modifier.fillMaxSize()
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize()
             ) {
                 items(state.backups) { backup ->
                     BackupItem(
