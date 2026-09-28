@@ -1,7 +1,7 @@
 package de.malteans.backup_control.di
 
-import de.malteans.backup_control.backups.data.BackupRepositoryImpl
-import de.malteans.backup_control.backups.domain.BackupRepository
+import de.malteans.backup_control.backups.data.DefaultBackupRemoteSource
+import de.malteans.backup_control.backups.domain.BackupRemoteSource
 import de.malteans.backup_control.backups.presentation.details.BackupDetailsViewModel
 import de.malteans.backup_control.backups.presentation.overview.BackupOverviewViewModel
 import de.malteans.backup_control.core.data.network.HttpClientFactory
@@ -19,13 +19,13 @@ val sharedModule = module {
     single<PreferenceDataStore> { DefaultPreferenceDataStore(get()) }
 
     single<HttpClient> { HttpClientFactory.create(get()) }
-    single<BackupRepository> { BackupRepositoryImpl(get(), get()) }
+    single<BackupRemoteSource> { DefaultBackupRemoteSource(get(), get()) }
 
     viewModelOf(::BackupOverviewViewModel)
     viewModel { params ->
         BackupDetailsViewModel(
             logFileName = params.get(),
-            backupRepository = get()
+            backupRemoteSource = get()
         )
     }
 }

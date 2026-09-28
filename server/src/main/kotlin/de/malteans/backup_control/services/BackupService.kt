@@ -2,8 +2,11 @@ package de.malteans.backup_control.services
 
 import de.malteans.backup_control.ServerConstants
 import de.malteans.backup_control.db.BackupsTable
-import de.malteans.backup_control.model.BackupDto
+import de.malteans.backup_control.db.FileDistributionTable
+import de.malteans.backup_control.model.Backup
+import de.malteans.backup_control.model.FileDistribution
 import de.malteans.backup_control.services.util.readLastNLines
+import kotlinx.datetime.toKotlinLocalDateTime
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.*
@@ -15,7 +18,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 interface BackupService {
-    suspend fun getBackups(): Result<List<BackupDto>>
+    suspend fun getBackups(): Result<List<Backup>>
     suspend fun updateBackups(): Result<Unit>
 
     suspend fun insertBackup(logFilePath: String): Result<Unit>
@@ -31,14 +34,74 @@ class BackupServiceImpl(
         val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")!!
     }
 
-    override suspend fun getBackups(): Result<List<BackupDto>> = runCatching {
+    override suspend fun getBackups(): Result<List<Backup>> = runCatching {
         transaction(database) {
             BackupsTable.selectAll().map { row ->
-                BackupDto(
+                val totalFilesUuid = row[BackupsTable.totalFiles]
+                val createdFilesUuid = row[BackupsTable.createdFiles]
+                val deletedFilesUuid = row[BackupsTable.deletedFiles]
+
+                val totalFiles = totalFilesUuid?.let { uuid ->
+                    FileDistributionTable
+                        .selectAll()
+                        .where { FileDistributionTable.uuid eq uuid }
+                        .singleOrNull()
+                        ?.let { fdRow ->
+                            FileDistribution(
+                                uuid = uuid,
+                                regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                directories = fdRow[FileDistributionTable.directories],
+                                fileLinks = fdRow[FileDistributionTable.fileLinks]
+                            )
+                        }
+                }
+
+                val createdFiles = createdFilesUuid?.let { uuid ->
+                    FileDistributionTable
+                        .selectAll()
+                        .where { FileDistributionTable.uuid eq uuid }
+                        .singleOrNull()
+                        ?.let { fdRow ->
+                            FileDistribution(
+                                uuid = uuid,
+                                regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                directories = fdRow[FileDistributionTable.directories],
+                                fileLinks = fdRow[FileDistributionTable.fileLinks]
+                            )
+                        }
+                }
+
+                val deletedFiles = deletedFilesUuid?.let { uuid ->
+                    FileDistributionTable
+                        .selectAll()
+                        .where { FileDistributionTable.uuid eq uuid }
+                        .singleOrNull()
+                        ?.let { fdRow ->
+                            FileDistribution(
+                                uuid = uuid,
+                                regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                directories = fdRow[FileDistributionTable.directories],
+                                fileLinks = fdRow[FileDistributionTable.fileLinks]
+                            )
+                        }
+                }
+
+                Backup(
                     uuid = row[BackupsTable.uuid],
-                    datetime = row[BackupsTable.datetime].toString(),
+                    datetime = row[BackupsTable.datetime].toKotlinLocalDateTime(),
                     fileName = row[BackupsTable.fileName],
-                    success = row[BackupsTable.success]
+                    success = row[BackupsTable.success],
+                    duration = row[BackupsTable.duration],
+                    totalFiles = totalFiles,
+                    createdFiles = createdFiles,
+                    deletedFiles = deletedFiles,
+                    transferredRegularFiles = row[BackupsTable.transferredRegularFiles],
+                    totalFileSize = row[BackupsTable.totalFileSize],
+                    transferredFileSize = row[BackupsTable.transferredFileSize],
+                    totalBytesSent = row[BackupsTable.totalBytesSent],
+                    totalBytesReceived = row[BackupsTable.totalBytesReceived],
+                    bytesPerSecond = row[BackupsTable.bytesPerSecond],
+                    speedup = row[BackupsTable.speedup]
                 )
             }
         }

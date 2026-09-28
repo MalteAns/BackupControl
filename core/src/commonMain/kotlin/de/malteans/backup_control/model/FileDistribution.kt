@@ -3,9 +3,9 @@ package de.malteans.backup_control.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BackupDto(
+data class FileDistribution(
     val uuid: String,
-    val datetime: String,
-    val fileName: String,
-    val success: Boolean?,
+    val regularFiles: Int,
+    val directories: Int,
+    val fileLinks: Int,
 )

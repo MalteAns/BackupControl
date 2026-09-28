@@ -17,6 +17,8 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.bundles.ktor.server)
     implementation(libs.ktor.serialization.kotlinx.json)
+    // KotlinX
+    implementation(libs.kotlinx.datetime)
     // Koin (DI)
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)

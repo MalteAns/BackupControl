@@ -2,7 +2,7 @@ package de.malteans.backup_control.backups.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.malteans.backup_control.backups.domain.BackupRepository
+import de.malteans.backup_control.backups.domain.BackupRemoteSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class BackupDetailsViewModel(
     private val logFileName: String,
-    private val backupRepository: BackupRepository,
+    private val backupRemoteSource: BackupRemoteSource,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(BackupDetailsState())
@@ -27,7 +27,7 @@ class BackupDetailsViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            backupRepository.getBackupLogFile(logFileName)
+            backupRemoteSource.getBackupLogFile(logFileName)
                 .onSuccess { logFileContent ->
                     _state.update { it.copy(
                         isLoading = false,

@@ -1,21 +1,22 @@
 package de.malteans.backup_control.backups.data
 
 import de.malteans.backup_control.Endpoints
-import de.malteans.backup_control.backups.domain.Backup
-import de.malteans.backup_control.backups.domain.BackupRepository
+import de.malteans.backup_control.backups.domain.BackupRemoteSource
 import de.malteans.backup_control.core.data.AnsLog
 import de.malteans.backup_control.core.data.network.ApiConfig
 import de.malteans.backup_control.core.data.network.safeCall
 import de.malteans.backup_control.dto.BackupsResponse
+import de.malteans.backup_control.mappers.toDomain
+import de.malteans.backup_control.model.Backup
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-class BackupRepositoryImpl(
+class DefaultBackupRemoteSource(
     private val apiConfig: ApiConfig,
     private val client: HttpClient
-) : BackupRepository {
+) : BackupRemoteSource {
     companion object {
-        const val TAG = "BackupRepositoryImpl"
+        const val TAG = "DefaultBackupRemoteSource"
     }
 
     override suspend fun getBackups(): Result<List<Backup>> {

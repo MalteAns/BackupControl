@@ -2,7 +2,7 @@ package de.malteans.backup_control.backups.presentation.overview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.malteans.backup_control.backups.domain.BackupRepository
+import de.malteans.backup_control.backups.domain.BackupRemoteSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BackupOverviewViewModel(
-    private val repository: BackupRepository
+    private val repository: BackupRemoteSource
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BackupsOverviewState())
