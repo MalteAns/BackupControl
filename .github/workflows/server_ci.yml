@@ -28,7 +28,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean :shared:build :server:build
+        run: ./gradlew clean :core:build :server:build
         env:
           API_TOKEN: "API_TOKEN"
 

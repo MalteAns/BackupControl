@@ -34,7 +34,7 @@ jobs:
 #            (echo "❌ aboutlibraries.json outdated. Run './gradlew :composeApp:exportLibraryDefinitions' locally and commit." && exit 1)
 
       - name: Build with Gradle
-        run: ./gradlew clean :shared:build :composeApp:build
+        run: ./gradlew clean :core:build :app:shared:build
         env:
           API_TOKEN: "API_TOKEN"
 

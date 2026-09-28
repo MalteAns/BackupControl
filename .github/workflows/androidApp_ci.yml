@@ -28,7 +28,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean :androidApp:build
+        run: ./gradlew clean :app:androidApp:build
         env:
           API_TOKEN: "API_TOKEN"
 
