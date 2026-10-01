@@ -21,14 +21,14 @@ junit = "4.13.2"
 kotlin = "2.4.20"
 kotlinx-coroutines = "1.11.0"
 ktor = "3.6.0"
-logback = "1.6.3"
-material3 = "1.12.0-alpha03"
+logback = "1.6.4"
+material3 = "1.13.0-alpha01"
 materialIconsExtended = "1.7.3"
 
 kotlinSerialization = "1.11.0"
 kotlinxDatetime = "0.8.0-0.6.x-compat"
 koin = "4.2.2"
-navigation3 = "1.1.1"
+navigation3 = "1.1.2"
 
 datastore = "1.2.1"
 
