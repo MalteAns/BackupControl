@@ -1,8 +1,8 @@
 package de.malteans.backup_control.backup.presentation.details
 
+import de.malteans.backup_control.backup.domain.Backup
 import de.malteans.backup_control.backup.presentation.details.components.FileDistributionUi
 import de.malteans.backup_control.core.presentation.util.UiText
-import de.malteans.backup_control.model.Backup
 
 data class BackupDetailsState(
     val isLoading: Boolean = true,

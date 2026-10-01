@@ -1,4 +1,4 @@
-package de.malteans.backup_control.model
+package de.malteans.backup_control.backup.domain
 
 import kotlinx.serialization.Serializable
 

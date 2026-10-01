@@ -1,7 +1,6 @@
-package de.malteans.backup_control.mappers
+package de.malteans.backup_control.backup.data
 
-import de.malteans.backup_control.dto.BackupDto
-import de.malteans.backup_control.model.Backup
+import de.malteans.backup_control.backup.domain.Backup
 import kotlinx.datetime.LocalDateTime
 
 fun BackupDto.toDomain() = Backup(

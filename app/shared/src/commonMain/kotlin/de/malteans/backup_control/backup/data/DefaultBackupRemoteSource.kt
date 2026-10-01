@@ -1,13 +1,11 @@
 package de.malteans.backup_control.backup.data
 
 import de.malteans.backup_control.Endpoints
+import de.malteans.backup_control.backup.domain.Backup
 import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import de.malteans.backup_control.core.data.AnsLog
 import de.malteans.backup_control.core.data.network.ApiConfig
 import de.malteans.backup_control.core.data.network.safeCall
-import de.malteans.backup_control.dto.BackupsResponse
-import de.malteans.backup_control.mappers.toDomain
-import de.malteans.backup_control.model.Backup
 import io.ktor.client.*
 import io.ktor.client.request.*
 

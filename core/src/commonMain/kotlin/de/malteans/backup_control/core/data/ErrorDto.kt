@@ -1,4 +1,4 @@
-package de.malteans.backup_control.dto
+package de.malteans.backup_control.core.data
 
 import kotlinx.serialization.Serializable
 
@@ -12,4 +12,5 @@ enum class ErrorCode {
     UNKNOWN_ERROR,
     GET_BACKUPS_FAILED,
     UPDATE_BACKUPS_FAILED,
+    MISSING_PARAMETER,
 }

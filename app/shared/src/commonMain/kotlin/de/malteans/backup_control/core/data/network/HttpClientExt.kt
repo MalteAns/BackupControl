@@ -1,7 +1,7 @@
 package de.malteans.backup_control.core.data.network
 
 import de.malteans.backup_control.core.data.AnsLog
-import de.malteans.backup_control.dto.ErrorDto
+import de.malteans.backup_control.core.data.ErrorDto
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

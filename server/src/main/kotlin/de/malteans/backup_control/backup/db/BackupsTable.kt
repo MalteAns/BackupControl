@@ -1,4 +1,4 @@
-package de.malteans.backup_control.db
+package de.malteans.backup_control.backup.db
 
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Table
