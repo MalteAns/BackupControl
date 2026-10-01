@@ -1,4 +1,4 @@
-package de.malteans.backup_control.routes
+package de.malteans.backup_control.backup.routes
 
 import de.malteans.backup_control.dto.FilesResponse
 import io.ktor.server.http.content.*

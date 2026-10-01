@@ -1,4 +1,4 @@
-package de.malteans.backup_control.services.util
+package de.malteans.backup_control.backup.services.util
 
 import de.malteans.backup_control.model.Backup
 import de.malteans.backup_control.model.FileDistribution

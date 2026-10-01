@@ -1,8 +1,8 @@
-package de.malteans.backup_control.routes
+package de.malteans.backup_control.backup.routes
 
+import de.malteans.backup_control.backup.services.BackupService
 import de.malteans.backup_control.dto.BackupsResponse
 import de.malteans.backup_control.mappers.toDto
-import de.malteans.backup_control.services.BackupService
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

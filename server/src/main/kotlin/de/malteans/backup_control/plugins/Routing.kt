@@ -1,8 +1,8 @@
 package de.malteans.backup_control.plugins
 
-import de.malteans.backup_control.routes.registerBackupsRoute
-import de.malteans.backup_control.routes.registerFilesRoute
-import de.malteans.backup_control.services.BackupService
+import de.malteans.backup_control.backup.routes.registerBackupsRoute
+import de.malteans.backup_control.backup.routes.registerFilesRoute
+import de.malteans.backup_control.backup.services.BackupService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
