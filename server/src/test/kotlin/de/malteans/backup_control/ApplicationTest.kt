@@ -4,17 +4,18 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
 
     @Test
-    fun testRoot() = testApplication {
+    fun testHealth() = testApplication {
         application {
             module()
         }
-        val response = client.get("/")
+        val response = client.get("/v1/health")
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("Hello, Ktor!", response.bodyAsText())
+        assertEquals("""{"status":"ok"}""", response.bodyAsText())
     }
 }
