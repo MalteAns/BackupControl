@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Setup JDK 21
         uses: actions/setup-java@v3
@@ -28,9 +30,10 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean :shared:build :server:build
+        run: ./gradlew clean :core:build :server:build
         env:
           API_TOKEN: "API_TOKEN"
+          LOG_FILES_PATH: "LOG_FILES_PATH"
 
 #      - name: Run Unit Tests
 #        run: ./gradlew test

@@ -7,7 +7,10 @@
     <!-- Backup ____________________________________________________________________________________________________ -->
     <string name="backup">Backup</string>
     <string name="duration">Duration</string>
-    <string name="hours">Hours</string>
-    <string name="minutes">Minutes</string>
-    <string name="seconds">Seconds</string>
+    <string name="hours_unit">%1$s Hours</string>
+    <string name="minutes_unit">%1$s Minutes</string>
+    <string name="seconds_unit">%1$s Seconds</string>
+    <string name="regular_files">Regular Files</string>
+    <string name="directories">Directories</string>
+    <string name="file_links">File Links</string>
 </resources>

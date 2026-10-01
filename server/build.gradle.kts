@@ -34,3 +34,8 @@ dependencies {
 
     testImplementation(libs.kotlin.testJunit)
 }
+
+tasks.test { // Fallback test enviroment variables
+    environment("API_TOKEN", System.getenv("API_TOKEN") ?: "test-token")
+    environment("LOG_FILES_PATH", System.getenv("LOG_FILES_PATH") ?: "/tmp")
+}

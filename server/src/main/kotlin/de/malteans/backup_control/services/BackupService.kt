@@ -5,19 +5,20 @@ import de.malteans.backup_control.db.BackupsTable
 import de.malteans.backup_control.db.FileDistributionTable
 import de.malteans.backup_control.model.Backup
 import de.malteans.backup_control.model.FileDistribution
+import de.malteans.backup_control.services.util.parseRsyncLog
 import de.malteans.backup_control.services.util.readLastNLines
 import kotlinx.datetime.toKotlinLocalDateTime
-import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.io.File
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 interface BackupService {
     suspend fun getBackups(): Result<List<Backup>>
@@ -87,7 +88,7 @@ class BackupServiceImpl(
 
                 Backup(
                     uuid = row[BackupsTable.uuid],
-                    startTime = row[BackupsTable.datetime].toKotlinLocalDateTime(),
+                    startTime = row[BackupsTable.startTime]?.toKotlinLocalDateTime(),
                     fileName = row[BackupsTable.fileName],
                     success = row[BackupsTable.success],
                     duration = row[BackupsTable.duration],
@@ -110,51 +111,42 @@ class BackupServiceImpl(
         val logFilesDir = System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR)
             ?: throw IllegalStateException("${ServerConstants.LOG_FILES_PATH_ENV_VAR} environment variable not set")
 
-        val cutoffTime = transaction(database) {
-            BackupsTable
-                .select(BackupsTable.datetime)
-                .orderBy(BackupsTable.datetime, SortOrder.DESC)
-                .limit(1)
-                .map { it[BackupsTable.datetime] }
-                .firstOrNull()
-        } ?: LocalDateTime.MIN
+        val logFilesDirFile = File(logFilesDir)
+        val processedLogsDir = File(logFilesDirFile, "processedLogs")
 
-        val newLogFiles = File(logFilesDir)
-            .listFiles { file -> // Filter:
-                file.isFile && file.name.endsWith("_log-backup.txt") && try {
-                    val dateTimeStr = file.name.substringBeforeLast("_")
-                    val fileTime = LocalDateTime.parse(dateTimeStr, DATE_FORMATTER)
-                    fileTime > cutoffTime
-                } catch (e: Exception) {
-                    false
+        // If not existent create directory named "processedLogs"
+        if (!processedLogsDir.exists()) processedLogsDir.mkdirs()
+
+        // Iterate over files in logFilesDir (excluding files in processedLogs)
+        logFilesDirFile.listFiles()?.filter { file ->
+            file.isFile && file.parentFile == logFilesDirFile
+        }?.forEach { file ->
+            insertBackup(file.absolutePath)
+                .onSuccess {
+                    file.renameTo(File(processedLogsDir, file.name))
                 }
-            }?.toList()
-
-        newLogFiles?.forEach { file ->
-            insertBackup(file.absolutePath).getOrThrow()
-
+                .onFailure { exception ->
+                    throw exception
+                }
         }
     }
 
     override suspend fun insertBackup(logFilePath: String): Result<Unit> = runCatching {
-        val logText = readLastNLines(logFilePath, 17)
-        val firstLine = File(logFilePath).useLines { it.firstOrNull() }
-        if (firstLine != null) {
-            logText.add(0, firstLine)
-        }
+        val logText = readLastNLines(logFilePath, 20)
 
-        val backup = parseRsyncLog(logText)
+        val fileName = logFilePath.substringAfterLast('/')
+        val backup = parseRsyncLog(fileName, logText)
 
         transaction(database) {
             fun insertFileDistribution(distribution: FileDistribution?): String? {
                 if (distribution == null) return null
-                val generatedUuid = kotlin.uuid.Uuid.random().toString()
+                val generatedUuid = Uuid.generateV7().toHexDashString()
 
                 FileDistributionTable.insert {
-                    it[uuid] = generatedUuid
-                    it[regularFiles] = distribution.regularFiles
-                    it[directories] = distribution.directories
-                    it[fileLinks] = distribution.fileLinks
+                    it[FileDistributionTable.uuid] = generatedUuid
+                    it[FileDistributionTable.regularFiles] = distribution.regularFiles
+                    it[FileDistributionTable.directories] = distribution.directories
+                    it[FileDistributionTable.fileLinks] = distribution.fileLinks
                 }
                 return generatedUuid
             }
@@ -163,24 +155,24 @@ class BackupServiceImpl(
             val createdFilesUuid = insertFileDistribution(backup.createdFiles)
             val deletedFilesUuid = insertFileDistribution(backup.deletedFiles)
 
-            BackupsTable.insert {
-                it[uuid] = kotlin.uuid.Uuid.random().toString()
+            BackupsTable.insert { insert ->
+                insert[BackupsTable.uuid] = Uuid.generateV7().toHexDashString()
 
-                it[datetime] = LocalDateTime.parse(backup.startTime.toString())
+                insert[BackupsTable.startTime] = backup.startTime?.let { LocalDateTime.parse(it.toString()) }
 
-                it[fileName] = backup.fileName
-                it[success] = backup.success
-                it[duration] = backup.duration
-                it[totalFiles] = totalFilesUuid
-                it[createdFiles] = createdFilesUuid
-                it[deletedFiles] = deletedFilesUuid
-                it[transferredRegularFiles] = backup.transferredRegularFiles
-                it[totalFileSize] = backup.totalFileSize
-                it[transferredFileSize] = backup.transferredFileSize
-                it[totalBytesSent] = backup.totalBytesSent
-                it[totalBytesReceived] = backup.totalBytesReceived
-                it[bytesPerSecond] = backup.bytesPerSecond
-                it[speedup] = backup.speedup
+                insert[BackupsTable.fileName] = backup.fileName
+                insert[BackupsTable.success] = backup.success
+                insert[BackupsTable.duration] = backup.duration
+                insert[BackupsTable.totalFiles] = totalFilesUuid
+                insert[BackupsTable.createdFiles] = createdFilesUuid
+                insert[BackupsTable.deletedFiles] = deletedFilesUuid
+                insert[BackupsTable.transferredRegularFiles] = backup.transferredRegularFiles
+                insert[BackupsTable.totalFileSize] = backup.totalFileSize
+                insert[BackupsTable.transferredFileSize] = backup.transferredFileSize
+                insert[BackupsTable.totalBytesSent] = backup.totalBytesSent
+                insert[BackupsTable.totalBytesReceived] = backup.totalBytesReceived
+                insert[BackupsTable.bytesPerSecond] = backup.bytesPerSecond
+                insert[BackupsTable.speedup] = backup.speedup
             }
         }
     }
@@ -189,118 +181,5 @@ class BackupServiceImpl(
         transaction(database) {
             BackupsTable.deleteWhere { BackupsTable.uuid eq uuid }
         }
-    }
-
-    /**
-     * @param logLines consists of the first line with the timestamp of the start and then the last 17 lines which contain the statistics after a successful backup
-     */
-    fun parseRsyncLog(logLines: MutableList<String>): Backup {
-        val isFailed = logLines.any { it.contains("Backup failed") }
-        val validLines = logLines.filter { it.isNotBlank() }
-
-        // Helper to extract dates from either "2026/09/27 01:02:09" OR "Sun 27 Sep 01:02:09 CEST 2026"
-        fun extractDate(line: String?): LocalDateTime? {
-            if (line == null) return null
-            val match = """([A-Za-z]{3}\s+\d{1,2}\s+[A-Za-z]{3}\s+\d{2}:\d{2}:\d{2}\s+[A-Za-z]{3,4}\s+\d{4})""".toRegex().find(line)
-            if (match != null) {
-                val fmt = DateTimeFormatter.ofPattern("EEE d MMM HH:mm:ss z yyyy", Locale.ENGLISH)
-                try { return ZonedDateTime.parse(match.value, fmt).toLocalDateTime() } catch (e: Exception) {}
-            }
-            return null
-        }
-
-        // 1. Parse Datetime (Strictly from the first line)
-        val parsedStartTime = extractDate(validLines.firstOrNull())
-
-        // 2. Parse Duration (Difference between first and last line)
-        val endDatetime = extractDate(validLines.lastOrNull())
-
-        val computedDuration = if (parsedStartTime != null && endDatetime != null) {
-            val zoneOffset = ZoneId.systemDefault().rules.getOffset(endDatetime)
-            (endDatetime.toEpochSecond(zoneOffset) - parsedStartTime.toEpochSecond(zoneOffset)).toInt()
-        } else null
-
-        val fileFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
-        // Safely format the fileName (fallback to current time if parsing completely fails)
-        val safeFileNameDate = endDatetime ?: LocalDateTime.now()
-        val fileName = "${safeFileNameDate.format(fileFormatter)}_log-backup.txt"
-
-        // 3. Early return if backup failed
-        if (isFailed) {
-            return Backup(
-                fileName = fileName,
-                startTime = parsedStartTime?.toKotlinLocalDateTime() ?: LocalDateTime.now().toKotlinLocalDateTime(),
-                success = false,
-                duration = computedDuration
-            )
-        }
-
-        // 4. Full parse if backup succeeded
-        fun String.toCleanLong(): Long = this.replace(",", "").toLongOrNull() ?: 0L
-        fun String.toCleanInt(): Int = this.replace(",", "").substringBefore('.').toIntOrNull() ?: 0
-
-        var totalFiles: FileDistribution? = null
-        var createdFiles: FileDistribution? = null
-        var deletedFiles: FileDistribution? = null
-        var transRegFiles: Int? = null
-        var totalSize: Long? = null
-        var transSize: Long? = null
-        var bytesSent: Long? = null
-        var bytesReceived: Long? = null
-        var bytesPerSec: Int? = null
-        var parsedSpeedup: Int? = null
-
-        val distributionRegex = """\(reg:\s*([\d,]+),\s*dir:\s*([\d,]+),\s*link:\s*([\d,]+)\)""".toRegex()
-
-        fun parseFileDistribution(line: String): FileDistribution? {
-            val match = distributionRegex.find(line)
-            if (match != null) {
-                return FileDistribution(match.groupValues[1].toCleanInt(), match.groupValues[2].toCleanInt(), match.groupValues[3].toCleanInt())
-            }
-            val singleNumberMatch = """:\s*([\d,]+)$""".toRegex().find(line)
-            val count = singleNumberMatch?.groupValues?.get(1)?.toCleanInt() ?: 0
-            return if (count == 0) FileDistribution(0, 0, 0) else null
-        }
-
-        validLines.forEach { line ->
-            when {
-                line.contains("Number of files:") -> totalFiles = parseFileDistribution(line)
-                line.contains("Number of created files:") -> createdFiles = parseFileDistribution(line)
-                line.contains("Number of deleted files:") -> deletedFiles = parseFileDistribution(line)
-                line.contains("Number of regular files transferred:") ->
-                    transRegFiles = """transferred:\s*([\d,]+)""".toRegex().find(line)?.groupValues?.get(1)?.toCleanInt()
-                line.contains("Total file size:") ->
-                    totalSize = """size:\s*([\d,]+)""".toRegex().find(line)?.groupValues?.get(1)?.toCleanLong()
-                line.contains("Total transferred file size:") ->
-                    transSize = """size:\s*([\d,]+)""".toRegex().find(line)?.groupValues?.get(1)?.toCleanLong()
-                line.contains("bytes/sec") -> {
-                    val match = """sent\s+([\d,]+)\s+bytes\s+received\s+([\d,]+)\s+bytes\s+([\d.,]+)\s+bytes/sec""".toRegex().find(line)
-                    match?.let {
-                        bytesSent = it.groupValues[1].toCleanLong()
-                        bytesReceived = it.groupValues[2].toCleanLong()
-                        bytesPerSec = it.groupValues[3].toCleanInt()
-                    }
-                }
-                line.contains("speedup is") ->
-                    parsedSpeedup = """speedup is\s+([\d.,]+)""".toRegex().find(line)?.groupValues?.get(1)?.toCleanInt()
-            }
-        }
-
-        return Backup(
-            fileName = fileName,
-            startTime = parsedStartTime?.toKotlinLocalDateTime() ?: LocalDateTime.now().toKotlinLocalDateTime(),
-            success = true,
-            duration = computedDuration,
-            totalFiles = totalFiles,
-            createdFiles = createdFiles,
-            deletedFiles = deletedFiles,
-            transferredRegularFiles = transRegFiles,
-            totalFileSize = totalSize,
-            transferredFileSize = transSize,
-            totalBytesSent = bytesSent,
-            totalBytesReceived = bytesReceived,
-            bytesPerSecond = bytesPerSec,
-            speedup = parsedSpeedup
-        )
     }
 }

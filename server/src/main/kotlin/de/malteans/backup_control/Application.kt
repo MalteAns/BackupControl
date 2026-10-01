@@ -23,7 +23,7 @@ fun main() {
 
 fun Application.module() {
     assert(System.getenv(ServerConstants.API_TOKEN_ENV_VAR) != null) { "API_TOKEN environment variable must be set" }
-    assert(System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR) != null) { "FILES_DIR environment variable must be set" }
+    assert(System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR) != null) { "LOG_FILES_PATH environment variable must be set" }
 
     install(DefaultHeaders)
     install(AutoHeadResponse)

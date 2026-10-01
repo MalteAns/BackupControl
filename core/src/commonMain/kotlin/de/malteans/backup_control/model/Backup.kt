@@ -4,14 +4,13 @@ import kotlinx.datetime.LocalDateTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-data class Backup @OptIn(ExperimentalUuidApi::class) constructor(
+@OptIn(ExperimentalUuidApi::class)
+data class Backup(
     val uuid: String = Uuid.generateV7().toHexDashString(),
-    val startTime: LocalDateTime,
+    val startTime: LocalDateTime? = null,
     val fileName: String,
     val success: Boolean? = null,
-    /**
-     * Duration in seconds
-     */
+    /** Duration in seconds */
     val duration: Int? = null,
     val totalFiles: FileDistribution? = null,
     val createdFiles: FileDistribution? = null,

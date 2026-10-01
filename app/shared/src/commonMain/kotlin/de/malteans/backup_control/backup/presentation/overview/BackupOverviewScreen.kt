@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.malteans.backup_control.backup.presentation.util.BackupItem
+import de.malteans.backup_control.backup.presentation.components.BackupItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
