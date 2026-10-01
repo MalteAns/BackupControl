@@ -1,5 +1,6 @@
-package de.malteans.backup_control.backup.presentation.details.compose
+package de.malteans.backup_control.backup.presentation.details.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileCopy
@@ -9,22 +10,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import backupcontrol.app.shared.generated.resources.Res
 import backupcontrol.app.shared.generated.resources.directories
 import backupcontrol.app.shared.generated.resources.file_links
 import backupcontrol.app.shared.generated.resources.regular_files
-import de.malteans.backup_control.model.FileDistribution
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FileDistributionTags(
-    distribution: FileDistribution,
+    distribution: FileDistributionUi,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
 
-    FlowRow(modifier = modifier) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+    ) {
         (0..2).forEach { index ->
             val toolTipState = rememberTooltipState(isPersistent = false)
             TooltipBox(
@@ -33,16 +37,18 @@ fun FileDistributionTags(
                     positioning = TooltipAnchorPosition.Above
                 ),
                 tooltip = {
-                    Text(
-                        text = when (index) {
-                            0 -> stringResource(Res.string.regular_files)
-                            1 -> stringResource(Res.string.directories)
-                            else -> stringResource(Res.string.file_links)
-                        }
-                    )
+                    RichTooltip {
+                        Text(
+                            text = when (index) {
+                                0 -> stringResource(Res.string.regular_files)
+                                1 -> stringResource(Res.string.directories)
+                                else -> stringResource(Res.string.file_links)
+                            }
+                        )
+                    }
                 },
             ) {
-                ElevatedAssistChip(
+                AssistChip(
                     onClick = { scope.launch { toolTipState.show() } },
                     label = {
                         Text(
@@ -50,7 +56,7 @@ fun FileDistributionTags(
                                 0 -> distribution.regularFiles
                                 1 -> distribution.directories
                                 else -> distribution.fileLinks
-                            }.toString()
+                            }
                         )
                     },
                     leadingIcon = {
@@ -66,7 +72,7 @@ fun FileDistributionTags(
                                 else -> stringResource(Res.string.file_links)
                             }
                         )
-                    }
+                    },
                 )
             }
         }

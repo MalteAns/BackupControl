@@ -1,4 +1,4 @@
-package de.malteans.backup_control.backup.presentation.util
+package de.malteans.backup_control.backup.presentation.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
@@ -9,7 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import backupcontrol.app.shared.generated.resources.*
+import backupcontrol.app.shared.generated.resources.Res
+import backupcontrol.app.shared.generated.resources.duration
 import de.malteans.backup_control.model.Backup
 import org.jetbrains.compose.resources.stringResource
 
@@ -35,7 +36,7 @@ fun BackupItem(
             headlineContent = { Text(backup.startTime?.date.toString()) },
             supportingContent = {
                 Text(
-                    text = "${stringResource(Res.string.duration)}: ${backup.duration?.formatDuration() ?: "—"}",
+                    text = "${stringResource(Res.string.duration)}: ${backup.duration?.formatDuration()?.asString() ?: "—"}",
                 )
             },
             leadingContent = {
@@ -61,20 +62,5 @@ fun BackupItem(
                 trailingContentColor = LocalContentColor.current,
             ),
         )
-    }
-}
-
-@Composable
-private fun Int.formatDuration(): String {
-    val hours = this / 3600
-    val minutes = (this % 3600) / 60
-    val seconds = this % 60
-
-    fun Int.toTwoDigits(): String = this.toString().padStart(2, '0')
-
-    return when {
-        hours > 0 -> "${hours.toTwoDigits()}:${minutes.toTwoDigits()}:${seconds.toTwoDigits()} ${stringResource(Res.string.hours)}"
-        minutes > 0 -> "${minutes.toTwoDigits()}:${seconds.toTwoDigits()} ${stringResource(Res.string.minutes)}"
-        else -> "${seconds.toTwoDigits()} ${stringResource(Res.string.seconds)}"
     }
 }

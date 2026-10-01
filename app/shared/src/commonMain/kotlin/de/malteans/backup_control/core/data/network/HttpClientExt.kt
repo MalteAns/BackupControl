@@ -1,6 +1,7 @@
 package de.malteans.backup_control.core.data.network
 
 import de.malteans.backup_control.core.data.AnsLog
+import de.malteans.backup_control.dto.ErrorDto
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -25,14 +26,15 @@ suspend inline fun <reified T> responseToResult(
         in 200..299 -> {
             try {
                 Result.success(response.body<T>())
-            } catch(e: NoTransformationFoundException) {
+            } catch(e: Exception) {
                 Result.failure(e)
             }
         }
         else -> {
             val data = try {
-                response.body<T>()
-            } catch(_: NoTransformationFoundException) {
+                val errorDto = response.body<ErrorDto>()
+                "${errorDto.code}: ${errorDto.message}"
+            } catch(_: Exception) {
                 response.bodyAsText().ifBlank { null }
             }
             Result.failure(HttpStatusException(response.status, data))
@@ -40,4 +42,4 @@ suspend inline fun <reified T> responseToResult(
     }
 }
 
-data class HttpStatusException(val statusCode: HttpStatusCode, val data: Any? = null) : Exception()
+data class HttpStatusException(val statusCode: HttpStatusCode, val data: String? = null) : Exception()

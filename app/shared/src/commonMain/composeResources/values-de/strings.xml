@@ -7,9 +7,9 @@
     <!-- Backup ____________________________________________________________________________________________________ -->
     <string name="backup">Sicherungskopie</string>
     <string name="duration">Dauer</string>
-    <string name="hours">Stunden</string>
-    <string name="minutes">Minuten</string>
-    <string name="seconds">Sekunden</string>
+    <string name="hours_unit">%1$s Stunden</string>
+    <string name="minutes_unit">%1$s Minuten</string>
+    <string name="seconds_unit">%1$s Sekunden</string>
     <string name="regular_files">Reguläre Dateien</string>
     <string name="directories">Verzeichnisse</string>
     <string name="file_links">Dateilinks</string>
