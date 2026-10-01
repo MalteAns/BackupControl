@@ -1,6 +1,6 @@
-package de.malteans.backup_control.dto
+package de.malteans.backup_control.backup.data
 
-import de.malteans.backup_control.model.FileDistribution
+import de.malteans.backup_control.backup.domain.FileDistribution
 import kotlinx.serialization.Serializable
 
 @Serializable

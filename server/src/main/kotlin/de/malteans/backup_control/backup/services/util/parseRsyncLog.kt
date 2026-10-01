@@ -1,7 +1,7 @@
 package de.malteans.backup_control.backup.services.util
 
-import de.malteans.backup_control.model.Backup
-import de.malteans.backup_control.model.FileDistribution
+import de.malteans.backup_control.backup.domain.Backup
+import de.malteans.backup_control.backup.domain.FileDistribution
 import kotlinx.datetime.toKotlinLocalDateTime
 import java.time.LocalDateTime
 import java.time.ZoneId

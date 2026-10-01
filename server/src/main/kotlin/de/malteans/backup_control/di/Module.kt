@@ -5,6 +5,9 @@ import de.malteans.backup_control.backup.db.BackupsTable
 import de.malteans.backup_control.backup.db.FileDistributionTable
 import de.malteans.backup_control.backup.services.BackupService
 import de.malteans.backup_control.backup.services.BackupServiceImpl
+import de.malteans.backup_control.commandExecution.db.CommandTable
+import de.malteans.backup_control.commandExecution.service.CommandService
+import de.malteans.backup_control.commandExecution.service.CommandServiceImpl
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
@@ -23,6 +26,7 @@ val module = module {
         transaction(database) {
             MigrationUtils.statementsRequiredForDatabaseMigration(
                 BackupsTable, FileDistributionTable,
+                CommandTable,
             withLogs = true).forEach { statement ->
                 exec(statement)
             }
@@ -32,4 +36,5 @@ val module = module {
     }
     
     single<BackupService> { BackupServiceImpl(get()) }
+    single<CommandService> { CommandServiceImpl(get()) }
 }
