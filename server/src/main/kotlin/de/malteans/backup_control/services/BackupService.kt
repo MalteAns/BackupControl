@@ -8,9 +8,11 @@ import de.malteans.backup_control.model.FileDistribution
 import de.malteans.backup_control.services.util.parseRsyncLog
 import de.malteans.backup_control.services.util.readLastNLines
 import kotlinx.datetime.toKotlinLocalDateTime
-import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.io.File
 import java.time.LocalDateTime
@@ -109,28 +111,23 @@ class BackupServiceImpl(
         val logFilesDir = System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR)
             ?: throw IllegalStateException("${ServerConstants.LOG_FILES_PATH_ENV_VAR} environment variable not set")
 
-        val cutoffTime = transaction(database) {
-            BackupsTable
-                .select(BackupsTable.startTime)
-                .orderBy(BackupsTable.startTime, SortOrder.DESC)
-                .limit(1)
-                .map { it[BackupsTable.startTime] }
-                .firstOrNull()
-        } ?: LocalDateTime.MIN
+        val logFilesDirFile = File(logFilesDir)
+        val processedLogsDir = File(logFilesDirFile, "processedLogs")
 
-        val newLogFiles = File(logFilesDir)
-            .listFiles { file -> // Filter:
-                file.isFile && file.name.endsWith("_log-backup.txt") && try {
-                    val dateTimeStr = file.name.substringBeforeLast("_")
-                    val fileTime = LocalDateTime.parse(dateTimeStr, DATE_FORMATTER)
-                    fileTime > cutoffTime
-                } catch (e: Exception) {
-                    false
+        // If not existent create directory named "processedLogs"
+        if (!processedLogsDir.exists()) processedLogsDir.mkdirs()
+
+        // Iterate over files in logFilesDir (excluding files in processedLogs)
+        logFilesDirFile.listFiles()?.filter { file ->
+            file.isFile && file.parentFile == logFilesDirFile
+        }?.forEach { file ->
+            insertBackup(file.absolutePath)
+                .onSuccess {
+                    file.renameTo(File(processedLogsDir, file.name))
                 }
-            }?.toList()
-
-        newLogFiles?.forEach { file ->
-            insertBackup(file.absolutePath).getOrThrow()
+                .onFailure { exception ->
+                    throw exception
+                }
         }
     }
 
