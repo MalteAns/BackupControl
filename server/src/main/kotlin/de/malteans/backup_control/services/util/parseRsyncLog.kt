@@ -18,7 +18,7 @@ fun parseRsyncLog(fileName: String, logLines: MutableList<String>): Backup {
     // Helper to extract dates from either "2026/09/27 01:02:09" OR "Sun 27 Sep 01:02:09 CEST 2026"
     fun extractDate(line: String?): LocalDateTime? {
         if (line == null) return null
-        val formatter = DateTimeFormatter.ofPattern("EEE d MMM HH:mm:ss zzz yyyy")
+        val formatter = DateTimeFormatter.ofPattern("EEE [ ]d MMM HH:mm:ss zzz yyyy")
         return runCatching {
             ZonedDateTime.parse(line, formatter).toLocalDateTime()
         }.getOrNull()
