@@ -2,6 +2,7 @@ package de.malteans.backup_control.commandExecution.service
 
 import de.malteans.backup_control.commandExecution.db.CommandTable
 import de.malteans.backup_control.commandExecution.domain.Command
+import de.malteans.backup_control.commandExecution.domain.CommandConfig
 import de.malteans.backup_control.commandExecution.util.writeToPipe
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
@@ -14,7 +15,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 interface CommandService {
-    fun updateCommands(commands: List<Command>): Result<Unit>
+    fun updateCommands(commandConfigs: List<CommandConfig>): Result<Unit>
 
     fun getCommands(): Result<List<Command>>
     fun getCommand(uuid: String): Result<Command>
@@ -26,16 +27,15 @@ interface CommandService {
 class CommandServiceImpl(
     private val database: Database,
 ) : CommandService {
-    override fun updateCommands(commands: List<Command>): Result<Unit> = runCatching {
+    override fun updateCommands(commandConfigs: List<CommandConfig>): Result<Unit> = runCatching {
         transaction(database) {
             CommandTable.deleteAll()
 
-            commands.forEach { command ->
+            commandConfigs.forEach { config ->
                 CommandTable.insert { insert ->
                     insert[CommandTable.uuid] = Uuid.generateV7().toHexDashString()
-                    insert[CommandTable.uuid] = command.uuid
-                    insert[CommandTable.name] = command.name
-                    insert[CommandTable.command] = command.command
+                    insert[CommandTable.name] = config.name
+                    insert[CommandTable.command] = config.command
                 }
             }
         }
@@ -68,7 +68,8 @@ class CommandServiceImpl(
                 .single()
         }
 
-        writeToPipe(command.command).getOrThrow()
+        // TODO: get pipePath from commands.json
+        writeToPipe(command.command, "/tmp/testPipe").getOrThrow()
     }
 
     private fun Iterable<ResultRow>.toCommandList(): List<Command> = this.map { row ->

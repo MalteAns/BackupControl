@@ -25,8 +25,18 @@ fun Route.registerCommandExecutionRoute(
                     HttpStatusCode.BadRequest,
                     ErrorDto(ErrorCode.MISSING_PARAMETER, "Parameter 'uuid' is required")
                 )
-            // TODO: check if uuid is valid
-            commandService.executeCommand(uuid).getOrThrow()
+            commandService.executeCommand(uuid)
+                .getOrElse { error ->
+                    when (error) {
+                        is NoSuchElementException -> {
+                            return@post call.respond(
+                                HttpStatusCode.BadRequest,
+                                ErrorDto(ErrorCode.INVALID_PARAMETER, "Invalid value for parameter 'uuid'")
+                            )
+                        }
+                        else -> throw error
+                    }
+                }
             call.respond(HttpStatusCode.OK)
         }
     }

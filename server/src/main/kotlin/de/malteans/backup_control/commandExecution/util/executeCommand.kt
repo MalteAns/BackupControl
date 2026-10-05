@@ -1,11 +1,10 @@
 package de.malteans.backup_control.commandExecution.util
 
-fun writeToPipe(message: String): Result<Unit> {
-    return executeCommand("echo", message, ">", "/tmp/testPipe") // FIXME parameterize Pipe
+fun writeToPipe(message: String, pipePath: String): Result<Unit> {
+    return executeCommand("echo", message, ">", pipePath)
 }
 
 private fun executeCommand(vararg command: String): Result<Unit> {
-    println("Executing command: ${command.joinToString(" ")}")
     val fullCommand = command.joinToString(" ")
     val process = Runtime.getRuntime().exec(arrayOf("/bin/sh", "-c", fullCommand))
     val result = process.waitFor()
