@@ -8,6 +8,7 @@ import de.malteans.backup_control.backup.domain.FileDistribution
 import de.malteans.backup_control.backup.services.util.parseRsyncLog
 import de.malteans.backup_control.backup.services.util.readLastNLines
 import kotlinx.datetime.toKotlinLocalDateTime
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
@@ -39,71 +40,74 @@ class BackupServiceImpl(
 
     override suspend fun getBackups(): Result<List<Backup>> = runCatching {
         transaction(database) {
-            BackupsTable.selectAll().map { row ->
-                val totalFilesUuid = row[BackupsTable.totalFiles]
-                val createdFilesUuid = row[BackupsTable.createdFiles]
-                val deletedFilesUuid = row[BackupsTable.deletedFiles]
+            BackupsTable
+                .selectAll()
+                .orderBy(BackupsTable.startTime, SortOrder.DESC)
+                .map { row ->
+                    val totalFilesUuid = row[BackupsTable.totalFiles]
+                    val createdFilesUuid = row[BackupsTable.createdFiles]
+                    val deletedFilesUuid = row[BackupsTable.deletedFiles]
 
-                val totalFiles = totalFilesUuid?.let { uuid ->
-                    FileDistributionTable
-                        .selectAll()
-                        .where { FileDistributionTable.uuid eq uuid }
-                        .singleOrNull()
-                        ?.let { fdRow ->
-                            FileDistribution(
-                                regularFiles = fdRow[FileDistributionTable.regularFiles],
-                                directories = fdRow[FileDistributionTable.directories],
-                                fileLinks = fdRow[FileDistributionTable.fileLinks]
-                            )
-                        }
+                    val totalFiles = totalFilesUuid?.let { uuid ->
+                        FileDistributionTable
+                            .selectAll()
+                            .where { FileDistributionTable.uuid eq uuid }
+                            .singleOrNull()
+                            ?.let { fdRow ->
+                                FileDistribution(
+                                    regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                    directories = fdRow[FileDistributionTable.directories],
+                                    fileLinks = fdRow[FileDistributionTable.fileLinks]
+                                )
+                            }
+                    }
+
+                    val createdFiles = createdFilesUuid?.let { uuid ->
+                        FileDistributionTable
+                            .selectAll()
+                            .where { FileDistributionTable.uuid eq uuid }
+                            .singleOrNull()
+                            ?.let { fdRow ->
+                                FileDistribution(
+                                    regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                    directories = fdRow[FileDistributionTable.directories],
+                                    fileLinks = fdRow[FileDistributionTable.fileLinks]
+                                )
+                            }
+                    }
+
+                    val deletedFiles = deletedFilesUuid?.let { uuid ->
+                        FileDistributionTable
+                            .selectAll()
+                            .where { FileDistributionTable.uuid eq uuid }
+                            .singleOrNull()
+                            ?.let { fdRow ->
+                                FileDistribution(
+                                    regularFiles = fdRow[FileDistributionTable.regularFiles],
+                                    directories = fdRow[FileDistributionTable.directories],
+                                    fileLinks = fdRow[FileDistributionTable.fileLinks]
+                                )
+                            }
+                    }
+
+                    Backup(
+                        uuid = row[BackupsTable.uuid],
+                        startTime = row[BackupsTable.startTime]?.toKotlinLocalDateTime(),
+                        fileName = row[BackupsTable.fileName],
+                        success = row[BackupsTable.success],
+                        duration = row[BackupsTable.duration],
+                        totalFiles = totalFiles,
+                        createdFiles = createdFiles,
+                        deletedFiles = deletedFiles,
+                        transferredRegularFiles = row[BackupsTable.transferredRegularFiles],
+                        totalFileSize = row[BackupsTable.totalFileSize],
+                        transferredFileSize = row[BackupsTable.transferredFileSize],
+                        totalBytesSent = row[BackupsTable.totalBytesSent],
+                        totalBytesReceived = row[BackupsTable.totalBytesReceived],
+                        bytesPerSecond = row[BackupsTable.bytesPerSecond],
+                        speedup = row[BackupsTable.speedup]
+                    )
                 }
-
-                val createdFiles = createdFilesUuid?.let { uuid ->
-                    FileDistributionTable
-                        .selectAll()
-                        .where { FileDistributionTable.uuid eq uuid }
-                        .singleOrNull()
-                        ?.let { fdRow ->
-                            FileDistribution(
-                                regularFiles = fdRow[FileDistributionTable.regularFiles],
-                                directories = fdRow[FileDistributionTable.directories],
-                                fileLinks = fdRow[FileDistributionTable.fileLinks]
-                            )
-                        }
-                }
-
-                val deletedFiles = deletedFilesUuid?.let { uuid ->
-                    FileDistributionTable
-                        .selectAll()
-                        .where { FileDistributionTable.uuid eq uuid }
-                        .singleOrNull()
-                        ?.let { fdRow ->
-                            FileDistribution(
-                                regularFiles = fdRow[FileDistributionTable.regularFiles],
-                                directories = fdRow[FileDistributionTable.directories],
-                                fileLinks = fdRow[FileDistributionTable.fileLinks]
-                            )
-                        }
-                }
-
-                Backup(
-                    uuid = row[BackupsTable.uuid],
-                    startTime = row[BackupsTable.startTime]?.toKotlinLocalDateTime(),
-                    fileName = row[BackupsTable.fileName],
-                    success = row[BackupsTable.success],
-                    duration = row[BackupsTable.duration],
-                    totalFiles = totalFiles,
-                    createdFiles = createdFiles,
-                    deletedFiles = deletedFiles,
-                    transferredRegularFiles = row[BackupsTable.transferredRegularFiles],
-                    totalFileSize = row[BackupsTable.totalFileSize],
-                    transferredFileSize = row[BackupsTable.transferredFileSize],
-                    totalBytesSent = row[BackupsTable.totalBytesSent],
-                    totalBytesReceived = row[BackupsTable.totalBytesReceived],
-                    bytesPerSecond = row[BackupsTable.bytesPerSecond],
-                    speedup = row[BackupsTable.speedup]
-                )
-            }
         }
     }
 
