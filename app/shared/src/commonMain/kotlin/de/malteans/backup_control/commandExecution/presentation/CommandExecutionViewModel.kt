@@ -1,11 +1,13 @@
 package de.malteans.backup_control.commandExecution.presentation
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import backupcontrol.app.shared.generated.resources.Res
 import backupcontrol.app.shared.generated.resources.command_executed_successfully
 import de.malteans.backup_control.commandExecution.domain.CommandRemoteSource
 import de.malteans.backup_control.core.presentation.util.UiText
+import de.malteans.backup_control.core.presentation.util.toUiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.Channel
@@ -38,9 +40,15 @@ class CommandExecutionViewModel(
                     remoteSource.executeCommand(action.uuid)
                         .onSuccess {
                             sendEvent(CommandExecutionEvent.ShowSnackbar(
-                                message = UiText.Resource(
-                                    Res.string.command_executed_successfully,
-                                )
+                                message = UiText.Resource(Res.string.command_executed_successfully),
+                                withDismissAction = true,
+                            ))
+                        }
+                        .onFailure { error ->
+                            sendEvent(CommandExecutionEvent.ShowSnackbar(
+                                message = error.toUiText(),
+                                duration = SnackbarDuration.Long,
+                                withDismissAction = true,
                             ))
                         }
                 }

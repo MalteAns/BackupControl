@@ -2,7 +2,7 @@ package de.malteans.backup_control.core.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
@@ -13,7 +13,7 @@ import de.malteans.backup_control.core.presentation.util.ErrorScreen
 
 @Composable
 fun CoreNavDisplay() {
-    val backStack = remember { mutableStateListOf<Route>(Route.Main) }
+    val backStack = rememberSaveable { mutableStateListOf<Route>(Route.Main) }
 
     NavDisplay(
         backStack = backStack,

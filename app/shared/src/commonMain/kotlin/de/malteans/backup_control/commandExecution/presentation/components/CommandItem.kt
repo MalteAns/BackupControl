@@ -40,7 +40,7 @@ fun CommandItem(
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
                 contentColor = contentColor,
-                supportingContentColor = contentColor,
+                supportingContentColor = contentColor.copy(alpha = 0.6f),
             )
         )
     }
