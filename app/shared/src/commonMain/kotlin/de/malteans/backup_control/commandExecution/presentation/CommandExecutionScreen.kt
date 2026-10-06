@@ -33,6 +33,9 @@ fun CommandExecutionScreenRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
+            is CommandExecutionEvent.ShowSnackbar -> {
+                // TODO
+            }
             else -> throw NotImplementedError("Event '${event::class.simpleName}' not implemented")
         }
     }
