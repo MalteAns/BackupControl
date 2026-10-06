@@ -4,7 +4,9 @@
     <string name="en">English</string>
     <string name="de">Deutsch</string>
 
+    <string name="navigate_back">Zurück navigieren</string>
     <!-- Backup ____________________________________________________________________________________________________ -->
+    <string name="backups">Sicherungskopien</string>
     <string name="backup">Sicherungskopie</string>
     <string name="duration">Dauer</string>
     <string name="hours_unit">%1$s Stunden</string>
@@ -13,4 +15,10 @@
     <string name="regular_files">Reguläre Dateien</string>
     <string name="directories">Verzeichnisse</string>
     <string name="file_links">Dateilinks</string>
+
+    <!-- CommandExecution __________________________________________________________________________________________ -->
+    <string name="command_execution">Befehlausführung</string>
+    <string name="unnamed_command">Unbenannter Befehl</string>
+    <string name="command_executed_successfully">Befehl erfolgreich ausgeführt</string>
+
 </resources>

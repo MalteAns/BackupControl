@@ -4,6 +4,7 @@
     <string name="en">English</string>
     <string name="de">Deutsch</string>
 
+    <string name="navigate_back">Navigate back</string>
     <!-- Backup ____________________________________________________________________________________________________ -->
     <string name="backup">Backup</string>
     <string name="duration">Duration</string>
@@ -13,4 +14,10 @@
     <string name="regular_files">Regular Files</string>
     <string name="directories">Directories</string>
     <string name="file_links">File Links</string>
+
+    <!-- CommandExecution __________________________________________________________________________________________ -->
+    <string name="command_execution">Command Execution</string>
+    <string name="unnamed_command">Unnamed Command</string>
+    <string name="command_executed_successfully">Command executed successfully</string>
+
 </resources>

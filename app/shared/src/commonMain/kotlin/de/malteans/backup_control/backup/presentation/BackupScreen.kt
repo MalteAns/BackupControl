@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import backupcontrol.app.shared.generated.resources.Res
+import backupcontrol.app.shared.generated.resources.backups
 import de.malteans.backup_control.backup.presentation.navigation.BackupNavDisplay
 import de.malteans.backup_control.core.presentation.navigation.Route
 import de.malteans.backup_control.core.presentation.util.CustomTopBar
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BackupScreen(
@@ -29,7 +32,7 @@ fun BackupScreen(
     Scaffold(
         topBar = {
             CustomTopBar(
-                title = "Backups",
+                title = stringResource(Res.string.backups),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(

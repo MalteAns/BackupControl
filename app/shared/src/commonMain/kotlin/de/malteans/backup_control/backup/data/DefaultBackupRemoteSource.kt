@@ -19,7 +19,7 @@ class DefaultBackupRemoteSource(
 
     override suspend fun getBackups(): Result<List<Backup>> {
         return safeCall<BackupsResponse> {
-            client.get(Endpoints.Backups.GetAll.url) {
+            client.get(Endpoints.Backup.GetAll.url) {
                 header("Authorization", "Bearer ${apiConfig.apiToken}")
             }
         }

@@ -11,4 +11,17 @@ sealed interface Route {
         @Serializable
         data  class Details(val logFileName: String) : Route
     }
+    @Serializable
+    data object CommandExecution : Route {
+
+    }
+    @Serializable
+    data object Main : Route {
+
+    }
+    @Serializable
+    data object Settings : Route {
+
+    }
+
 }
