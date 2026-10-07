@@ -9,6 +9,7 @@
 
     <!-- Backup ____________________________________________________________________________________________________ -->
     <string name="backup">Backup</string>
+    <string name="backups">Backups</string>
     <string name="duration">Duration</string>
     <string name="hours_unit">%1$s Hours</string>
     <string name="minutes_unit">%1$s Minutes</string>
