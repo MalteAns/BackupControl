@@ -6,9 +6,9 @@ android-minSdk = "30"
 android-targetSdk = "37"
 
 applicationId = "de.malteans.backup_control"
-projectVersionCode = "1"
+projectVersionCode = "2"
 projectVersionName = "1.0.0"
-projectVersionNameSuffix = "-beta1"
+projectVersionNameSuffix = "-beta2"
 
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.8.0"
