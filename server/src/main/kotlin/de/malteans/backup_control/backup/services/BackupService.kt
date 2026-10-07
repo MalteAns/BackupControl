@@ -17,7 +17,6 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.io.File
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -34,10 +33,6 @@ class BackupServiceImpl(
     private val database: Database,
 ) : BackupService {
     
-    private companion object {
-        val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")!!
-    }
-
     override suspend fun getBackups(): Result<List<Backup>> = runCatching {
         transaction(database) {
             BackupsTable
@@ -113,7 +108,7 @@ class BackupServiceImpl(
 
     override suspend fun updateBackups(): Result<Unit> = runCatching {
         val logFilesDir = System.getenv(ServerConstants.LOG_FILES_PATH_ENV_VAR)
-            ?: throw IllegalStateException("${ServerConstants.LOG_FILES_PATH_ENV_VAR} environment variable not set")
+            ?: ServerConstants.DEFAULT_LOG_FILES_PATH
 
         val logFilesDirFile = File(logFilesDir)
         val processedLogsDir = File(logFilesDirFile, "processedLogs")
