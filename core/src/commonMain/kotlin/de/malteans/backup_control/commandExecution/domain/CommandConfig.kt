@@ -10,5 +10,6 @@ data class CommandConfig(
 
 @Serializable
 data class CommandsConfig(
+    val pipePath: String,
     val commands: List<CommandConfig>,
 )

@@ -9,7 +9,7 @@ object CommandConfigLoader {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun loadFromFile(path: String): Result<List<CommandConfig>> = runCatching {
+    fun loadFromFile(path: String): Result<CommandsConfig> = runCatching {
         val file = File(path)
 
         require(file.exists()) { "File does not exist: $path" }
@@ -20,19 +20,24 @@ object CommandConfigLoader {
 
         validateCommandsConfig(commandsConfig).getOrThrow()
 
-        commandsConfig.commands
+        commandsConfig
     }
 
-    private fun validateCommandsConfig(config: CommandsConfig): Result<CommandsConfig> = runCatching {
-        config.copy(
-            commands = config.commands.map { commandConfig ->
-                validateCommandConfig(commandConfig).getOrThrow()
-            }
-        )
+    private fun validateCommandsConfig(config: CommandsConfig): Result<Unit> = runCatching {
+        validatePipePath(config.pipePath).getOrThrow()
+        config.commands.forEach { command ->
+            validateCommand(command).getOrThrow()
+        }
     }
 
-    private fun validateCommandConfig(config: CommandConfig): Result<CommandConfig> = runCatching {
-        require(config.command.isNotBlank()) { "Command name must not be blank" }
-        config
+    private fun validatePipePath(pipePath: String): Result<Unit> = runCatching {
+        require(pipePath.isNotBlank()) { "Pipe path cannot be blank" }
+        // TODO: Add more
+    }
+
+    private fun validateCommand(command: CommandConfig): Result<Unit> = runCatching {
+        require(command.name?.isNotBlank() == true) { "Command name can't be blank" }
+        require(command.command.isNotBlank()) { "Command can't be blank" }
+        // TODO: Add more
     }
 }

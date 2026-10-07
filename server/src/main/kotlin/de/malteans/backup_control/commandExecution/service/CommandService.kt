@@ -15,6 +15,8 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 interface CommandService {
+    fun setPipePath(pipePath: String): Result<Unit>
+
     fun updateCommands(commandConfigs: List<CommandConfig>): Result<Unit>
 
     fun getCommands(): Result<List<Command>>
@@ -27,6 +29,12 @@ interface CommandService {
 class CommandServiceImpl(
     private val database: Database,
 ) : CommandService {
+    private var pipePath: String? = null
+
+    override fun setPipePath(pipePath: String): Result<Unit> = runCatching { // TODO: This can be done nicer
+        this.pipePath = pipePath
+    }
+
     override fun updateCommands(commandConfigs: List<CommandConfig>): Result<Unit> = runCatching {
         transaction(database) {
             CommandTable.deleteAll()
@@ -68,8 +76,9 @@ class CommandServiceImpl(
                 .single()
         }
 
-        // TODO: get pipePath from commands.json
-        writeToPipe(command.command, "/tmp/testPipe").getOrThrow()
+        pipePath?.let { pipePath ->
+            writeToPipe(command.command, pipePath).getOrThrow()
+        } ?: throw IllegalStateException("Pipe path not set")
     }
 
     private fun Iterable<ResultRow>.toCommandList(): List<Command> = this.map { row ->

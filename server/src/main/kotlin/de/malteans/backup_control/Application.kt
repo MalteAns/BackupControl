@@ -67,11 +67,18 @@ private fun Application.loadCommandConfig() {
         ?: ServerConstants.DEFAULT_COMMANDS_CONFIG_PATH
 
     CommandConfigLoader.loadFromFile(configPath)
-        .onSuccess { commandConfigs ->
+        .onSuccess { config ->
             val commandService by inject<CommandService>()
-            commandService.updateCommands(commandConfigs)
+            commandService.setPipePath(config.pipePath)
                 .onSuccess {
-                    logger.info("Successfully loaded ${commandConfigs.size} commands from config file: $configPath")
+                    logger.info("Successfully set pipe path from config")
+                }
+                .onFailure { error ->
+                    logger.error("Failed to set pipe path from config", error)
+                }
+            commandService.updateCommands(config.commands)
+                .onSuccess {
+                    logger.info("Successfully loaded ${config.commands.size} commands from config file: $configPath")
                 }
                 .onFailure { error ->
                     logger.error("Failed to update commands in database", error)
