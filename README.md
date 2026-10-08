@@ -68,9 +68,10 @@ networks:
 * Dependency: `jq`. If not installed, install it with `sudo apt install jq` (or something similar adjusted to your OS)
 * Auto-run by adding it as cronjob (`@reboot /YOUR/PATH/TO/runPipeCommands.sh >> /YOUR/PATH/TO/runPipeCommands.log 2>&1`)
   * With user permissions (e.g. `wg-quick` won't work): `crontab -e` 
-  * With root permissions: `sudo crontab -e`
+  * With root permissions: `sudo crontab -e`. **IMPORTANT:** add `export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin` in the second line of the script, to avoid unknown command errors
 ```shell
 #!/bin/bash
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" # Optional, but recommended
 
 set -u
 
