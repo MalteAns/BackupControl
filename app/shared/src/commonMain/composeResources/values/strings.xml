@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Backup Control</string>
+    <string name="en">English</string>
+    <string name="de">Deutsch</string>
+
+    <!-- General ___________________________________________________________________________________________________ -->
+    <string name="navigate_back">Navigate back</string>
+
+    <!-- Backup ____________________________________________________________________________________________________ -->
+    <string name="backup">Backup</string>
+    <string name="backups">Backups</string>
+    <string name="duration">Duration</string>
+    <string name="hours_unit">%1$s Hours</string>
+    <string name="minutes_unit">%1$s Minutes</string>
+    <string name="seconds_unit">%1$s Seconds</string>
+    <string name="regular_files">Regular Files</string>
+    <string name="directories">Directories</string>
+    <string name="file_links">File Links</string>
+
+    <!-- CommandExecution __________________________________________________________________________________________ -->
+    <string name="command_execution">Command Execution</string>
+    <string name="unnamed_command">Unnamed Command</string>
+    <string name="command_executed_successfully">Command executed successfully</string>
+    <string name="no_commands_found">No commands found</string>
+
+    <!-- Error Messages _________________________________________________________________________ -->
+    <string name="server_not_started_desc">Server not started. Please contact the administrator.</string>
+    <string name="server_error_desc">Server Error (%1$s). Please contact the administrator.</string>
+    <string name="unexpected_error_desc">Unexpected Error (%1$s). Please contact the administrator.</string>
+</resources>

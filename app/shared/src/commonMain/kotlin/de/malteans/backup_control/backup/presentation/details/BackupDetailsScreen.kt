@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.malteans.backup_control.backup.domain.Backup
+import de.malteans.backup_control.backup.domain.FileDistribution
 import de.malteans.backup_control.backup.presentation.components.formatByteSize
 import de.malteans.backup_control.backup.presentation.components.formatDuration
 import de.malteans.backup_control.backup.presentation.details.components.FileDistributionTags
@@ -20,8 +22,6 @@ import de.malteans.backup_control.core.presentation.theme.AppTheme
 import de.malteans.backup_control.core.presentation.util.CircularLoadingScreen
 import de.malteans.backup_control.core.presentation.util.ErrorScreen
 import de.malteans.backup_control.core.presentation.util.UiText
-import de.malteans.backup_control.model.Backup
-import de.malteans.backup_control.model.FileDistribution
 import kotlinx.datetime.LocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf

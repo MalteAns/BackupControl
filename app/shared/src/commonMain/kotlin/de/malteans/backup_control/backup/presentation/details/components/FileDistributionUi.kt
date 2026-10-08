@@ -1,8 +1,8 @@
 package de.malteans.backup_control.backup.presentation.details.components
 
+import de.malteans.backup_control.backup.domain.FileDistribution
 import de.malteans.backup_control.backup.presentation.components.pow
 import de.malteans.backup_control.backup.presentation.components.round
-import de.malteans.backup_control.model.FileDistribution
 
 data class FileDistributionUi(
     val regularFiles: String = "—",

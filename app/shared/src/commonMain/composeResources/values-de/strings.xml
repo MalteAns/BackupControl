@@ -4,7 +4,11 @@
     <string name="en">English</string>
     <string name="de">Deutsch</string>
 
+    <!-- General ___________________________________________________________________________________________________ -->
+    <string name="navigate_back">Zurück navigieren</string>
+
     <!-- Backup ____________________________________________________________________________________________________ -->
+    <string name="backups">Sicherungskopien</string>
     <string name="backup">Sicherungskopie</string>
     <string name="duration">Dauer</string>
     <string name="hours_unit">%1$s Stunden</string>
@@ -13,4 +17,15 @@
     <string name="regular_files">Reguläre Dateien</string>
     <string name="directories">Verzeichnisse</string>
     <string name="file_links">Dateilinks</string>
+
+    <!-- CommandExecution __________________________________________________________________________________________ -->
+    <string name="command_execution">Befehlausführung</string>
+    <string name="unnamed_command">Unbenannter Befehl</string>
+    <string name="command_executed_successfully">Befehl erfolgreich ausgeführt</string>
+    <string name="no_commands_found">Keine Befehle gefunden</string>
+
+    <!-- Error Messages _________________________________________________________________________ -->
+    <string name="server_not_started_desc">Server nicht gestartet. Bitte kontaktiere den administrator.</string>
+    <string name="server_error_desc">Server Fehler (%1$s). Bitte kontaktiere den administrator.</string>
+    <string name="unexpected_error_desc">Unerwarteter Fehler (%1$s). Bitte kontaktiere den administrator.</string>
 </resources>

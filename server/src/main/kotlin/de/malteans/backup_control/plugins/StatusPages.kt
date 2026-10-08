@@ -1,7 +1,7 @@
 package de.malteans.backup_control.plugins
 
-import de.malteans.backup_control.dto.ErrorCode
-import de.malteans.backup_control.dto.ErrorDto
+import de.malteans.backup_control.core.data.ErrorCode
+import de.malteans.backup_control.core.data.ErrorDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
