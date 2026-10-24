@@ -4,6 +4,9 @@ import de.malteans.backup_control.backup.data.DefaultBackupRemoteSource
 import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import de.malteans.backup_control.backup.presentation.details.BackupDetailsViewModel
 import de.malteans.backup_control.backup.presentation.overview.BackupOverviewViewModel
+import de.malteans.backup_control.commandExecution.data.DefaultCommandRemoteSource
+import de.malteans.backup_control.commandExecution.domain.CommandRemoteSource
+import de.malteans.backup_control.commandExecution.presentation.CommandExecutionViewModel
 import de.malteans.backup_control.core.data.network.HttpClientFactory
 import de.malteans.datastore.data.DefaultPreferenceDataStore
 import de.malteans.datastore.domain.PreferenceDataStore
@@ -20,6 +23,7 @@ val sharedModule = module {
 
     single<HttpClient> { HttpClientFactory.create(get()) }
     single<BackupRemoteSource> { DefaultBackupRemoteSource(get(), get()) }
+    single<CommandRemoteSource> { DefaultCommandRemoteSource(get(), get()) }
 
     viewModelOf(::BackupOverviewViewModel)
     viewModel { params ->
@@ -28,4 +32,5 @@ val sharedModule = module {
             backupRemoteSource = get()
         )
     }
+    viewModelOf(::CommandExecutionViewModel)
 }

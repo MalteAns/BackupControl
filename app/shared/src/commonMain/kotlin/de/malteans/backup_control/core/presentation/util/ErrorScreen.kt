@@ -31,6 +31,8 @@ fun ErrorScreen(
         ) {
             Text(
                 text = errorMessage,
+                modifier = Modifier
+                    .padding(16.dp)
             )
         }
     }

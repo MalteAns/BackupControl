@@ -2,13 +2,13 @@ package de.malteans.backup_control.backup.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.malteans.backup_control.backup.domain.Backup
 import de.malteans.backup_control.backup.domain.BackupRemoteSource
 import de.malteans.backup_control.backup.presentation.components.formatByteSize
 import de.malteans.backup_control.backup.presentation.components.formatDuration
 import de.malteans.backup_control.backup.presentation.details.components.FileDistributionUi
 import de.malteans.backup_control.backup.presentation.details.components.toUiModel
 import de.malteans.backup_control.core.presentation.util.UiText
-import de.malteans.backup_control.model.Backup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow

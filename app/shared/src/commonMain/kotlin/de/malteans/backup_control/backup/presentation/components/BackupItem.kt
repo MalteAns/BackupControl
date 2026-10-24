@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import backupcontrol.app.shared.generated.resources.Res
 import backupcontrol.app.shared.generated.resources.duration
-import de.malteans.backup_control.model.Backup
+import de.malteans.backup_control.backup.domain.Backup
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

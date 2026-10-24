@@ -1,6 +1,14 @@
 package de.malteans.backup_control.backup.presentation.details
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.GridConfigurationScope
+import androidx.compose.foundation.layout.GridScope
+import androidx.compose.foundation.layout.GridTrackSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -11,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.malteans.backup_control.backup.domain.Backup
+import de.malteans.backup_control.backup.domain.FileDistribution
 import de.malteans.backup_control.backup.presentation.components.formatByteSize
 import de.malteans.backup_control.backup.presentation.components.formatDuration
 import de.malteans.backup_control.backup.presentation.details.components.FileDistributionTags
@@ -20,8 +30,6 @@ import de.malteans.backup_control.core.presentation.theme.AppTheme
 import de.malteans.backup_control.core.presentation.util.CircularLoadingScreen
 import de.malteans.backup_control.core.presentation.util.ErrorScreen
 import de.malteans.backup_control.core.presentation.util.UiText
-import de.malteans.backup_control.model.Backup
-import de.malteans.backup_control.model.FileDistribution
 import kotlinx.datetime.LocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -45,6 +53,7 @@ fun BackupDetailsScreenRoot(
     )
 }
 
+@OptIn(ExperimentalGridApi::class)
 @Composable
 fun BackupDetailsScreen(
     state: BackupDetailsState,
@@ -67,8 +76,10 @@ fun BackupDetailsScreen(
             startTime = state.startTime,
             success = state.success,
             duration = state.duration.asString(),
-            totalFileSize = state.totalFileSize,
         )
+        BackupDetailsCard {
+            Text("Total File Size: ${state.totalFileSize}")
+        }
         FileDistributionCard(
             state.totalFiles,
             state.createdFiles,
@@ -91,7 +102,6 @@ private fun GeneralInfoCard(
     startTime: String,
     success: Boolean?,
     duration: String,
-    totalFileSize: String,
 ) = BackupDetailsCard {
     Text("Start:", maxLines = 1)
     Text(startTime, maxLines = 1)

@@ -1,6 +1,6 @@
 package de.malteans.backup_control.backup.presentation.overview
 
-import de.malteans.backup_control.model.Backup
+import de.malteans.backup_control.backup.domain.Backup
 
 data class BackupOverviewState (
     val isLoading: Boolean = true,

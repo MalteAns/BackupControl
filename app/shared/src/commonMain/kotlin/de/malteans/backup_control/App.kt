@@ -2,10 +2,13 @@ package de.malteans.backup_control
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import de.malteans.backup_control.core.presentation.MainScreen
+import de.malteans.backup_control.core.presentation.navigation.CoreNavDisplay
+import de.malteans.backup_control.core.presentation.theme.AppTheme
 
 @Composable
 @Preview
 fun App() {
-    MainScreen()
+    AppTheme {
+        CoreNavDisplay()
+    }
 }

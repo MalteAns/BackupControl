@@ -1,8 +1,10 @@
 package de.malteans.backup_control.plugins
 
-import de.malteans.backup_control.routes.registerBackupsRoute
-import de.malteans.backup_control.routes.registerFilesRoute
-import de.malteans.backup_control.services.BackupService
+import de.malteans.backup_control.backup.routes.registerBackupsRoute
+import de.malteans.backup_control.backup.routes.registerFilesRoute
+import de.malteans.backup_control.backup.services.BackupService
+import de.malteans.backup_control.commandExecution.registerCommandExecutionRoute
+import de.malteans.backup_control.commandExecution.service.CommandService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -13,6 +15,7 @@ import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
     val backupService by inject<BackupService>()
+    val commandService by inject<CommandService>()
     routing {
         route("v1") {
             get("/health") {
@@ -21,6 +24,8 @@ fun Application.configureRouting() {
             authenticate("bearer") {
                 registerFilesRoute()
                 registerBackupsRoute(backupService)
+
+                registerCommandExecutionRoute(commandService)
             }
         }
     }
