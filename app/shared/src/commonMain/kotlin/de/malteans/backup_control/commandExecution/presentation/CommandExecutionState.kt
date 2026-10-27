@@ -6,6 +6,7 @@ import de.malteans.backup_control.core.presentation.util.UiText
 data class CommandExecutionState(
     val isLoading: Boolean = true,
     val error: UiText? = null,
+    val isServerNotConfigured: Boolean = false,
 
     val commands: List<Command> = emptyList(),
 )

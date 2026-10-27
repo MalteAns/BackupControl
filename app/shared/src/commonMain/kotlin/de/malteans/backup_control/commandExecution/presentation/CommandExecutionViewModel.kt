@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import backupcontrol.app.shared.generated.resources.Res
 import backupcontrol.app.shared.generated.resources.command_executed_successfully
 import de.malteans.backup_control.commandExecution.domain.CommandRemoteSource
+import de.malteans.backup_control.core.data.settings.ServerConfigRepository
+import de.malteans.backup_control.core.data.settings.ServerNotConfiguredException
 import de.malteans.backup_control.core.presentation.util.UiText
 import de.malteans.backup_control.core.presentation.util.toUiText
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class CommandExecutionViewModel(
-    private val remoteSource: CommandRemoteSource
+    private val remoteSource: CommandRemoteSource,
+    private val serverConfigRepository: ServerConfigRepository,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(CommandExecutionState())
@@ -30,7 +33,11 @@ class CommandExecutionViewModel(
         )
 
     init {
-        loadCommands()
+        viewModelScope.launch {
+            serverConfigRepository.getServerConfigFlow().collect {
+                loadCommands()
+            }
+        }
     }
 
     fun onAction(action: CommandExecutionAction) {
@@ -75,9 +82,8 @@ class CommandExecutionViewModel(
                     // TODO: Log
                     _state.update { it.copy(
                         isLoading = false,
-                        error = UiText.DynamicString(error.message ?: "Unknown error"),
-
-                        // TODO: Clear commands?
+                        error = error.toUiText(),
+                        isServerNotConfigured = error is ServerNotConfiguredException,
                     ) }
                 }
         }

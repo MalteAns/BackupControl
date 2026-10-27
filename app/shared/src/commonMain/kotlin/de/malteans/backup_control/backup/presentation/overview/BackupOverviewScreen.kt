@@ -10,15 +10,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import backupcontrol.app.shared.generated.resources.Res
+import backupcontrol.app.shared.generated.resources.open_settings
 import de.malteans.backup_control.backup.presentation.components.BackupItem
 import de.malteans.backup_control.core.presentation.util.CircularLoadingScreen
 import de.malteans.backup_control.core.presentation.util.ErrorScreen
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun BackupOverviewScreenRoot(
+    onBackupClick: (String) -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     viewModel: BackupOverviewViewModel = koinViewModel(),
-    onBackupClick: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -28,6 +32,9 @@ fun BackupOverviewScreenRoot(
             when (action) {
                 is BackupOverviewAction.OpenBackupLog -> {
                     onBackupClick(action.logFileName)
+                }
+                is BackupOverviewAction.OpenSettings -> {
+                    onOpenSettings()
                 }
                 else -> viewModel.onAction(action)
             }
@@ -45,7 +52,13 @@ fun BackupOverviewScreen(
         return
     }
     if (state.error != null) {
-        ErrorScreen(state.error)
+        ErrorScreen(
+            errorMessage = state.error,
+            actionLabel = if (state.isServerNotConfigured) stringResource(Res.string.open_settings) else null,
+            onAction = if (state.isServerNotConfigured) {
+                { onAction(BackupOverviewAction.OpenSettings) }
+            } else null,
+        )
         return
     }
 
@@ -73,4 +86,3 @@ fun BackupOverviewScreen(
         }
     }
 }
-

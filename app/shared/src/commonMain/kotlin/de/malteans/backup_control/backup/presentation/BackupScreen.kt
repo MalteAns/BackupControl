@@ -19,6 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BackupScreen(
     onClose: () -> Unit,
+    onOpenSettings: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val backStack = rememberSavableBackStack(Route.Backup.Overview)
@@ -47,6 +48,7 @@ fun BackupScreen(
         BackupNavDisplay(
             backStack = backStack,
             onBack = onBack,
+            onOpenSettings = onOpenSettings,
             modifier = Modifier.padding(paddingValues)
         )
     }

@@ -5,5 +5,6 @@ import de.malteans.backup_control.backup.domain.Backup
 data class BackupOverviewState (
     val isLoading: Boolean = true,
     val backups: List<Backup> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val isServerNotConfigured: Boolean = false,
 )

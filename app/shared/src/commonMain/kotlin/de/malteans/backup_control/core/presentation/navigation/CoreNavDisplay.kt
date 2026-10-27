@@ -11,7 +11,7 @@ import de.malteans.backup_control.backup.presentation.BackupScreen
 import de.malteans.backup_control.commandExecution.presentation.CommandExecutionScreenRoot
 import de.malteans.backup_control.core.data.AnsLog
 import de.malteans.backup_control.core.presentation.MainScreen
-import de.malteans.backup_control.core.presentation.util.ErrorScreen
+import de.malteans.backup_control.settings.presentation.SettingsScreenRoot
 
 private const val TAG = "CoreNavDisplay"
 
@@ -45,11 +45,13 @@ fun CoreNavDisplay() {
                 is Route.Backup -> NavEntry(key) {
                     BackupScreen(
                         onClose = { backStack.removeLast() },
+                        onOpenSettings = { backStack.add(Route.Settings) },
                     )
                 }
                 is Route.CommandExecution -> NavEntry(key) {
                     CommandExecutionScreenRoot(
                         onBack = { backStack.removeLast() },
+                        onOpenSettings = { backStack.add(Route.Settings) },
                     )
                 }
                 is Route.Main -> NavEntry(key) {
@@ -58,7 +60,9 @@ fun CoreNavDisplay() {
                     )
                 }
                 is Route.Settings -> NavEntry(key) {
-                    ErrorScreen("Not implemented yet") // TODO: Implement Settings Screen
+                    SettingsScreenRoot(
+                        onBack = { backStack.removeLast() },
+                    )
                 }
                 else -> error("Unknown route: $key")
             }

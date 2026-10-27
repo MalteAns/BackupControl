@@ -20,6 +20,7 @@ private const val TAG = "BackupsNavDisplay"
 fun BackupNavDisplay(
     backStack: SnapshotStateList<Route>,
     onBack: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -48,7 +49,8 @@ fun BackupNavDisplay(
                         onBackupClick = { logFileName ->
                             AnsLog.d(TAG, "Navigating to backup details for log file: $logFileName")
                             backStack.add(Route.Backup.Details(logFileName))
-                        }
+                        },
+                        onOpenSettings = onOpenSettings,
                     )
                 }
                 is Route.Backup.Details -> NavEntry(key) {
