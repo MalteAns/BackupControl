@@ -33,7 +33,7 @@ fun MainScreen(
             CustomTopBar(
                 title = stringResource(Res.string.app_name),
                 actions = {
-                    IconButton(onClick = { onNavigate(Route.Settings) }, enabled = false) { // TODO: Implement settings with server configuration
+                    IconButton(onClick = { onNavigate(Route.Settings) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = null

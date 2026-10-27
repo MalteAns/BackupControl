@@ -1,17 +1,9 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
 }
-
-private val apiToken: String = gradleLocalProperties(rootDir, rootProject.providers)
-    .getProperty("API_TOKEN")
-    ?: System.getenv("API_TOKEN")
-    ?: throw IllegalStateException(
-        "Missing API_TOKEN property in local.properties or environment variables"
-    )
 
 kotlin {
     compilerOptions {
@@ -41,9 +33,6 @@ android {
         versionCode = libs.versions.projectVersionCode.get().toInt()
         versionName = libs.versions.projectVersionName.get()
         versionNameSuffix = libs.versions.projectVersionNameSuffix.get()
-
-        val safeToken = apiToken.removeSurrounding("\"")
-        buildConfigField("String", "API_TOKEN", "\"$safeToken\"")
     }
     packaging {
         resources {
@@ -65,7 +54,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
-        buildConfig = true
         compose = true
     }
 }

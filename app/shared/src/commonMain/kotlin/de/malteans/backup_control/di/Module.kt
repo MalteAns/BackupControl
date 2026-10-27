@@ -8,6 +8,9 @@ import de.malteans.backup_control.commandExecution.data.DefaultCommandRemoteSour
 import de.malteans.backup_control.commandExecution.domain.CommandRemoteSource
 import de.malteans.backup_control.commandExecution.presentation.CommandExecutionViewModel
 import de.malteans.backup_control.core.data.network.HttpClientFactory
+import de.malteans.backup_control.core.data.settings.DefaultServerConfigRepository
+import de.malteans.backup_control.core.data.settings.ServerConfigRepository
+import de.malteans.backup_control.settings.presentation.SettingsViewModel
 import de.malteans.datastore.data.DefaultPreferenceDataStore
 import de.malteans.datastore.domain.PreferenceDataStore
 import io.ktor.client.*
@@ -22,6 +25,14 @@ val sharedModule = module {
     single<PreferenceDataStore> { DefaultPreferenceDataStore(get()) }
 
     single<HttpClient> { HttpClientFactory.create(get()) }
+
+    single<ServerConfigRepository> {
+        DefaultServerConfigRepository(
+            preferenceDataStore = get(),
+            apiTokenCipher = get(),
+        )
+    }
+
     single<BackupRemoteSource> { DefaultBackupRemoteSource(get(), get()) }
     single<CommandRemoteSource> { DefaultCommandRemoteSource(get(), get()) }
 
@@ -33,4 +44,5 @@ val sharedModule = module {
         )
     }
     viewModelOf(::CommandExecutionViewModel)
+    viewModelOf(::SettingsViewModel)
 }

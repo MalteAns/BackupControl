@@ -24,8 +24,19 @@
     <string name="command_executed_successfully">Befehl erfolgreich ausgeführt</string>
     <string name="no_commands_found">Keine Befehle gefunden</string>
 
+    <!-- Settings __________________________________________________________________________________________________ -->
+    <string name="settings">Einstellungen</string>
+    <string name="server_url">Server-URL</string>
+    <string name="server_url_placeholder">https://backup-control.malteans.de</string>
+    <string name="api_token">API-Token</string>
+    <string name="save">Speichern</string>
+    <string name="test_connection">Verbindung testen</string>
+    <string name="invalid_server_url">Ungültige Server-URL</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+
     <!-- Error Messages _________________________________________________________________________ -->
     <string name="server_not_started_desc">Server nicht gestartet. Bitte kontaktiere den administrator.</string>
     <string name="server_error_desc">Server Fehler (%1$s). Bitte kontaktiere den administrator.</string>
     <string name="unexpected_error_desc">Unerwarteter Fehler (%1$s). Bitte kontaktiere den administrator.</string>
+    <string name="server_not_configured_desc">Server nicht konfiguriert. Öffne die Einstellungen, um den Server zu konfigurieren.</string>
 </resources>

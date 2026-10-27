@@ -5,8 +5,8 @@ sealed class Endpoints(
     private val relativeUrl: String,
     private val apiVersion: String,
 ) {
-    val url: String
-        get() = "${CoreConstants.SERVER_URL}/${apiVersion}" + relativeUrl
+    fun url(baseUrl: String): String =
+        "${baseUrl.trimEnd('/')}/$apiVersion" + relativeUrl
 
     sealed interface Backup {
         data object GetAll : Endpoints(

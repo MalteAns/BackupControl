@@ -15,10 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import backupcontrol.app.shared.generated.resources.Res
-import backupcontrol.app.shared.generated.resources.command_execution
-import backupcontrol.app.shared.generated.resources.navigate_back
-import backupcontrol.app.shared.generated.resources.no_commands_found
+import backupcontrol.app.shared.generated.resources.*
 import de.malteans.backup_control.commandExecution.presentation.components.CommandItem
 import de.malteans.backup_control.core.presentation.util.*
 import kotlinx.coroutines.launch
@@ -28,6 +25,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CommandExecutionScreenRoot(
     onBack: () -> Unit,
+    onOpenSettings: () -> Unit = {},
     viewModel: CommandExecutionViewModel = koinViewModel(),
 ) {
     val scope = rememberCoroutineScope()
@@ -58,6 +56,7 @@ fun CommandExecutionScreenRoot(
         onAction = { action ->
             when (action) {
                 is CommandExecutionAction.OnBack -> onBack()
+                is CommandExecutionAction.OpenSettings -> onOpenSettings()
                 else -> viewModel.onAction(action)
             }
         }
@@ -98,7 +97,13 @@ fun CommandExecutionScreen(
             return@Scaffold
         }
         if (state.error != null) {
-            ErrorScreen(state.error.asString())
+            ErrorScreen(
+                errorMessage = state.error.asString(),
+                actionLabel = if (state.isServerNotConfigured) stringResource(Res.string.open_settings) else null,
+                onAction = if (state.isServerNotConfigured) {
+                    { onAction(CommandExecutionAction.OpenSettings) }
+                } else null,
+            )
             return@Scaffold
         }
         if (state.commands.isEmpty()) {
